@@ -1,6 +1,6 @@
 What if an AI could learn to use your phone — and improve itself?
 
-Here is the signal. arXiv:2609.29892v1 Announce Type: new Abstract: The rapid progression of large language models is extending AI from passive content generation into the active workflows of.
+Here is the signal. The rapid progression of large language models is extending AI from passive content generation into the active workflows of engineering and scientific discovery.
 
 Here is the interesting part. This shift raises a compelling question: can AI be both the object of development and an active participant in building next-generation AI systems?
 
