@@ -19,6 +19,79 @@ CHARACTERS = {
 }
 
 
+
+# Per-scene visual plan: every spoken line has an explicit actor, action, and
+# visual focus. The renderer uses this instead of generic character animation.
+SCENE_PLANS = {
+    "When the QR Payment Says 'Pending'": [
+        {"actor":"arjun","action":"paying","focus":"phone_pending"},
+        {"actor":"arjun","action":"waiting","focus":"counter"},
+        {"actor":"arjun","action":"checking_phone","focus":"phone_pending"},
+        {"actor":"arjun","action":"waiting","focus":"counter"},
+        {"actor":"arjun","action":"impatient","focus":"phone_pending"},
+        {"actor":"arjun","action":"refreshing","focus":"phone_pending"}
+    ],
+    "The Delivery Is Five Minutes Away": [
+        {"actor":"arjun","action":"checking_tracker","focus":"delivery_tracker"},
+        {"actor":"arjun","action":"sitting","focus":"phone"},
+        {"actor":"arjun","action":"watching_tracker","focus":"delivery_tracker"},
+        {"actor":"arjun","action":"waiting","focus":"delivery_tracker"},
+        {"actor":"arjun","action":"checking_tracker","focus":"delivery_tracker"},
+        {"actor":"arjun","action":"staring_at_tracker","focus":"delivery_tracker"}
+    ],
+    "The Apartment Lift Stops at Every Floor": [
+        {"actor":"arjun","action":"pressing_button","focus":"lift_panel"},
+        {"actor":"byte","action":"door_closing","focus":"lift"},
+        {"actor":"byte","action":"door_opening","focus":"lift"},
+        {"actor":"arjun","action":"surprised","focus":"floor_display"},
+        {"actor":"arjun","action":"waiting","focus":"lift"},
+        {"actor":"arjun","action":"exasperated","focus":"floor_display"}
+    ],
+    "When the Power Goes Out During Your Presentation": [
+        {"actor":"arjun","action":"presenting","focus":"projector"},
+        {"actor":"byte","action":"power_off","focus":"dark_projector"},
+        {"actor":"arjun","action":"panicking","focus":"dark_projector"},
+        {"actor":"arjun","action":"presenting_from_memory","focus":"notes"},
+        {"actor":"arjun","action":"embarrassed","focus":"notes"}
+    ],
+    "The Group Chat Before an Exam": [
+        {"actor":"arjun","action":"studying","focus":"exam_notes"},
+        {"actor":"byte","action":"sticker","focus":"chat"},
+        {"actor":"arjun","action":"serious","focus":"exam_notes"},
+        {"actor":"byte","action":"sticker","focus":"chat"},
+        {"actor":"arjun","action":"asking","focus":"chat"},
+        {"actor":"byte","action":"seen","focus":"chat"},
+        {"actor":"arjun","action":"dry_smile","focus":"chat"}
+    ],
+    "When the Bus Arrives After You Stop Checking": [
+        {"actor":"arjun","action":"waiting","focus":"bus_stop"},
+        {"actor":"arjun","action":"checking_phone","focus":"phone"},
+        {"actor":"byte","action":"bus_arrives","focus":"bus"},
+        {"actor":"arjun","action":"running","focus":"bus"},
+        {"actor":"byte","action":"bus_leaves","focus":"bus"},
+        {"actor":"arjun","action":"stunned","focus":"bus_stop"}
+    ],
+    "The Shopping Cart You Abandoned": [
+        {"actor":"arjun","action":"rejecting_purchase","focus":"cart"},
+        {"actor":"byte","action":"notification","focus":"cart"},
+        {"actor":"arjun","action":"checking_time","focus":"cart"},
+        {"actor":"byte","action":"saved_item","focus":"cart"},
+        {"actor":"arjun","action":"resigned","focus":"cart"},
+        {"actor":"byte","action":"reminder","focus":"cart"},
+        {"actor":"arjun","action":"exasperated","focus":"cart"}
+    ],
+    "The Alarm Clock Negotiation": [
+        {"actor":"byte","action":"alarm_ringing","focus":"alarm"},
+        {"actor":"arjun","action":"sleepy","focus":"bed"},
+        {"actor":"byte","action":"keeping_record","focus":"record_book"},
+        {"actor":"arjun","action":"negotiating","focus":"bed"},
+        {"actor":"byte","action":"showing_record","focus":"record_book"},
+        {"actor":"arjun","action":"pleading","focus":"bed"},
+        {"actor":"byte","action":"showing_backup","focus":"backup_files"},
+        {"actor":"arjun","action":"getting_up","focus":"bed"}
+    ]
+}
+
 SCENARIOS = [
     {
         "title": "When the QR Payment Says 'Pending'",
@@ -154,6 +227,7 @@ payload = {
     "score": 100,
     "hook": scenario["hook"],
     "script": script,
+    "scene_plan": SCENE_PLANS.get(scenario["title"], []),
     "format": CFG["channel"],
     "candidates_considered": len(SCENARIOS),
     "visual_nodes": scenario["nodes"],
