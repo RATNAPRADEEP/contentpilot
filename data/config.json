@@ -1,34 +1,22 @@
 {
   "channel": {
-    "name": "ContentPilot Lab",
+    "name": "ContentPilot Comedy",
     "language": "en",
     "format": "short",
-    "duration_seconds": 45,
-    "aspect_ratio": "9:16"
+    "duration_seconds": 40,
+    "aspect_ratio": "9:16",
+    "genre": "comedy"
   },
-  "topics": [
-    "AI tools",
-    "developer tools",
-    "automation",
-    "interesting open-source projects"
-  ],
-  "scoring_keywords": [
-    "ai",
-    "agent",
-    "github",
-    "open source",
-    "developer",
-    "automation",
-    "tool",
-    "launch",
-    "release",
-    "model",
-    "robot",
-    "software"
-  ],
-  "feeds": [
-    "https://hnrss.org/frontpage",
-    "https://github.blog/feed/",
-    "https://export.arxiv.org/rss/cs.AI"
-  ]
+  "comedy": {
+    "themes": [
+      "AI assistant disasters",
+      "developer life",
+      "office meetings",
+      "online shopping",
+      "student life",
+      "gym motivation",
+      "smartphone habits",
+      "everyday technology"
+    ]
+  }
 }
