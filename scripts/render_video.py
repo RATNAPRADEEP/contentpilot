@@ -44,8 +44,8 @@ def duration(path):
 # ---------- Original anime-inspired characters ----------
 # Original procedural character designs. They are not based on an existing
 # anime, film, game, manga, celebrity, or other copyrighted character.
-def make_character(path, kind, mood):
-    W, H = 520, 760
+def make_character(path, kind, mood, step=0):
+    W, H = 520, 1050
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im, "RGBA")
 
@@ -97,10 +97,22 @@ def make_character(path, kind, mood):
             d.arc((225,390,295,450), 10, 170, fill=(120,42,55,255), width=8)
         else:
             d.arc((230,395,290,435), 15, 165, fill=(120,42,55,255), width=6)
-        d.line((112,590,45,675), fill=jacket, width=45)
-        d.line((405,590,475,650), fill=jacket, width=45)
-        d.ellipse((22,650,78,704), fill=skin, outline=skin2, width=4)
-        d.ellipse((448,628,500,682), fill=skin, outline=skin2, width=4)
+        if step == 0:
+            d.line((112,590,52,675), fill=jacket, width=45)
+            d.line((405,590,472,655), fill=jacket, width=45)
+            d.ellipse((25,652,82,708), fill=skin, outline=skin2, width=4)
+            d.ellipse((445,633,502,689), fill=skin, outline=skin2, width=4)
+            left_leg=(205,755,175,1000); right_leg=(315,755,350,1000)
+        else:
+            d.line((112,590,68,645), fill=jacket, width=45)
+            d.line((405,590,448,675), fill=jacket, width=45)
+            d.ellipse((40,620,95,675), fill=skin, outline=skin2, width=4)
+            d.ellipse((420,652,478,708), fill=skin, outline=skin2, width=4)
+            left_leg=(205,755,235,1000); right_leg=(315,755,285,1000)
+        d.line(left_leg[:2], left_leg[2:], fill=jacket, width=58)
+        d.line(right_leg[:2], right_leg[2:], fill=jacket, width=58)
+        d.ellipse((145 if step==0 else 205,980,215 if step==0 else 270,1030), fill=(28,30,42,255))
+        d.ellipse((325 if step==0 else 260,980,395 if step==0 else 330,1030), fill=(28,30,42,255))
 
     else:
         skin=(174,228,242,255); skin2=(72,174,204,255)
@@ -135,10 +147,22 @@ def make_character(path, kind, mood):
             d.arc((225,390,295,450), 10, 170, fill=(5,55,70,255), width=8)
         else:
             d.arc((230,395,290,435), 15, 165, fill=(5,55,70,255), width=6)
-        d.line((112,590,45,675), fill=suit2, width=45)
-        d.line((405,590,475,650), fill=suit2, width=45)
-        d.ellipse((20,650,80,710), fill=skin, outline=skin2, width=4)
-        d.ellipse((445,628,505,688), fill=skin, outline=skin2, width=4)
+        if step == 0:
+            d.line((112,590,45,675), fill=suit2, width=45)
+            d.line((405,590,475,650), fill=suit2, width=45)
+            d.ellipse((20,650,80,710), fill=skin, outline=skin2, width=4)
+            d.ellipse((445,628,505,688), fill=skin, outline=skin2, width=4)
+            left_leg=(210,755,180,1000); right_leg=(310,755,345,1000)
+        else:
+            d.line((112,590,70,645), fill=suit2, width=45)
+            d.line((405,590,450,675), fill=suit2, width=45)
+            d.ellipse((42,620,98,675), fill=skin, outline=skin2, width=4)
+            d.ellipse((420,652,480,708), fill=skin, outline=skin2, width=4)
+            left_leg=(210,755,235,1000); right_leg=(310,755,285,1000)
+        d.line(left_leg[:2], left_leg[2:], fill=suit2, width=58)
+        d.line(right_leg[:2], right_leg[2:], fill=suit2, width=58)
+        d.ellipse((150 if step==0 else 205,980,220 if step==0 else 270,1030), fill=(5,38,54,255))
+        d.ellipse((320 if step==0 else 260,980,390 if step==0 else 330,1030), fill=(5,38,54,255))
         for y in range(180,735,42):
             d.line((120,y,400,y), fill=(190,255,255,32), width=2)
 
@@ -148,14 +172,18 @@ human=os.path.join(build,"character-human.png")
 human_shock=os.path.join(build,"character-human-shock.png")
 robot=os.path.join(build,"character-ai.png")
 robot_happy=os.path.join(build,"character-ai-happy.png")
-human_talk=os.path.join(build,"character-human-talk.png")
-robot_talk=os.path.join(build,"character-ai-talk.png")
-make_character(human,"human","neutral")
-make_character(human_shock,"human","shocked")
-make_character(human_talk,"human","talk")
-make_character(robot,"robot","neutral")
-make_character(robot_happy,"robot","happy")
-make_character(robot_talk,"robot","talk")
+human_talk=os.path.join(build,"character-arjun-talk-a.png")
+human_talk_b=os.path.join(build,"character-arjun-talk-b.png")
+robot_talk=os.path.join(build,"character-maya-talk-a.png")
+robot_talk_b=os.path.join(build,"character-maya-talk-b.png")
+make_character(human,"human","neutral",0)
+make_character(human_shock,"human","shocked",1)
+make_character(human_talk,"human","talk",0)
+make_character(human_talk_b,"human","talk",1)
+make_character(robot,"robot","neutral",0)
+make_character(robot_happy,"robot","happy",1)
+make_character(robot_talk,"robot","talk",0)
+make_character(robot_talk_b,"robot","talk",1)
 
 # ---------- Procedural comedy audio ----------
 def music_wav(path, seconds, style):
@@ -201,11 +229,6 @@ def sfx_wav(path, seconds, scene):
 
 styles=["playful","curious","tension","chaos","punchline","playful"]
 segments=[]
-background_url = data.get("background_urls", [""])[0] if data.get("background_urls") else ""
-background = os.path.join(build, "real-world-background.mp4")
-if background_url:
-    run(["curl", "-L", "--fail", "--retry", "3", "-o", background, background_url])
-    print("Using real-world background:", background_url)
 
 for i,text_line in enumerate(scripts):
     # One voice file per scene prevents dialogue from being cut at estimated boundaries.
@@ -215,7 +238,12 @@ for i,text_line in enumerate(scripts):
     voice_dur=duration(voice)
     dur=max(3.2,min(7.0,voice_dur+0.65))
     scene_txt=os.path.join(build,f"scene_{i}.txt")
-    open(scene_txt,"w",encoding="utf-8").write(wrap(safe(text_line)))
+    raw = safe(text_line)
+    speaker, _, words = raw.partition(":")
+    ai_speakers = {"CHAT", "ALARM", "PHONE", "POWER", "LIFT"}
+    speaker_name = "Maya" if speaker in {"CASHIER","FRIEND","NEIGHBOR"} else ("Byte" if speaker in ai_speakers else "Arjun")
+    subtitle = f"{speaker_name}: {words.strip()}" if words.strip() else speaker_name
+    open(scene_txt,"w",encoding="utf-8").write(wrap(subtitle, width=32, max_lines=2))
 
     music=os.path.join(build,f"music_{i}.wav")
     sfx=os.path.join(build,f"sfx_{i}.wav")
@@ -263,31 +291,35 @@ for i,text_line in enumerate(scripts):
     # Characters and environment stay visually dominant; dialogue is shown as
     # compact bottom subtitles with a subtle translucent background for readability.
     subtitle_style = (
-        f"drawbox=x=55:y=1600:w=970:h=210:color=000000@0.62:t=fill,"
-        f"drawtext=fontfile={font}:text='SCENE {i+1}':fontcolor=38bdf8:fontsize=20:x=78:y=1622,"
-        f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=10:x=78:y=1660,"
-        f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.35:fontsize=15:x=78:y=1850"
+        f"drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
+        f""
+        f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
+        f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.28:fontsize=14:x=95:y=1845"
     )
 
     fc=(
-        f"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=1.0:1[base];"
-        f"[base]eq=brightness=-0.05:saturation=0.95[m];"
-        f"[1:v]scale=270:375[h];"
-        f"[2:v]scale=270:375[r];"
-        f"[m][h]overlay=x='55+8*sin(t*3)':y='710+6*sin(t*6)':enable='between(t,0,{dur:.2f})'[c1];"
-        f"[c1][r]overlay=x='595+8*sin(t*3+1)':y='660+6*sin(t*6+1)':enable='between(t,0,{dur:.2f})'[c2];"
-        f"[c2]{subtitle_style}[v];"
-        f"[3:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
-        f"[4:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
-        f"[5:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[sfx];"
+        f"color=c={bg}:s=1080x1920:r=30[base];"
+        f"[base]{motif}[m];"
+        f"[1:v]scale=330:665[h0];"
+        f"[2:v]scale=330:665[r0];"
+        f"[3:v]scale=330:665[h1];"
+        f"[4:v]scale=330:665[r1];"
+        f"[m][h0]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
+        f"[c1][h1]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
+        f"[c2][r0]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
+        f"[c3][r1]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
+        f"[c4]{subtitle_style}[v];"
+        f"[5:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
+        f"[6:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
+        f"[7:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[sfx];"
         f"[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
         f"alimiter=limit=0.92[a]"
     )
 
 
     cmd=[
-        "ffmpeg","-y","-stream_loop","-1","-i",background,
-        "-i",h,"-i",r,"-i",voice,"-i",music,"-i",sfx,
+        "ffmpeg","-y",
+        "-i",h,"-i",r,"-i",human_talk_b,"-i",robot_talk_b,"-i",voice,"-i",music,"-i",sfx,
         "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
         "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
         "-c:a","aac","-b:a","128k",seg
