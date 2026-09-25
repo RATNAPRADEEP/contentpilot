@@ -34,6 +34,7 @@ font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 regular = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 title = data["source"]["title"]
 domain = data.get("source", {}).get("domain", "public source")
+nodes = data.get("visual_nodes", ["DISCOVER", "BUILD", "VERIFY"])
 scripts = data["script"]
 
 # Keep each scene readable while letting the narration drive the timing.
@@ -91,14 +92,18 @@ if has_image:
 else:
     # Fallback visual: an abstract AI/network motif made entirely in FFmpeg.
     filters.extend([
-        "drawbox=x=90:y=500:w=900:h=620:color=0x101a33@1:t=fill",
-        "drawbox=x=150:y=610:w=220:h=130:color=0x182a4a@1:t=fill",
-        "drawbox=x=430:y=790:w=220:h=130:color=0x182a4a@1:t=fill",
-        "drawbox=x=710:y=610:w=220:h=130:color=0x182a4a@1:t=fill",
-        "drawbox=x=430:y=470:w=220:h=130:color=0x243b63@1:t=fill",
-        "drawbox=x=370:y=665:w=60:h=5:color=white@0.28:t=fill",
-        "drawbox=x=537:y=600:w=6:h=190:color=white@0.28:t=fill",
-        "drawbox=x=650:y=850:w=65:h=5:color=white@0.28:t=fill",
+        "drawbox=x=75:y=210:w=930:h=720:color=0x0d172a@1:t=fill",
+        "drawbox=x=135:y=470:w=235:h=150:color=0x172b4d@1:t=fill",
+        "drawbox=x=422:y=670:w=235:h=150:color=0x172b4d@1:t=fill",
+        "drawbox=x=715:y=470:w=235:h=150:color=0x172b4d@1:t=fill",
+        "drawbox=x=422:y=280:w=235:h=150:color=0x243b63@1:t=fill",
+        "drawbox=x=370:y=545:w=55:h=6:color=white@0.28:t=fill",
+        "drawbox=x=535:y=430:w=6:h=240:color=white@0.28:t=fill",
+        "drawbox=x=655:y=545:w=60:h=6:color=white@0.28:t=fill",
+        f"drawtext=fontfile={font}:text='{nodes[0]}':fontcolor=white@0.90:fontsize=25:x=155:y=520",
+        f"drawtext=fontfile={font}:text='{nodes[1]}':fontcolor=white@0.90:fontsize=25:x=445:y=720",
+        f"drawtext=fontfile={font}:text='{nodes[2]}':fontcolor=white@0.90:fontsize=23:x=728:y=520",
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='CLOSED-LOOP':fontcolor=white@0.55:fontsize=20:x=455:y=330",
     ])
 
 labels = ["HOOK", "THE SIGNAL", "THE INTERESTING PART", "WHY IT MATTERS", "TAKEAWAY"]
@@ -107,16 +112,16 @@ for i, (text, start) in enumerate(zip(scripts, starts)):
     end = starts[i + 1] if i + 1 < len(starts) else total_duration
     textfile = os.path.join(build, f"scene_{i}.txt")
     filters.append(
-        f"drawbox=x=52:y=285:w=976:h=1320:color=0x05070d@0.50:t=fill:"
+        f"drawbox=x=52:y=975:w=976:h=650:color=0x05070d@0.90:t=fill:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
     filters.append(
-        f"drawtext=fontfile={font}:text='{labels[i]}':fontcolor=white@0.62:fontsize=27:x=78:y=330:"
+        f"drawtext=fontfile={font}:text='{labels[i]}':fontcolor=white@0.62:fontsize=27:x=78:y=1020:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
     filters.append(
-        f"drawtext=fontfile={font}:textfile='{textfile}':fontcolor=white:fontsize=55:"
-        f"line_spacing=15:x=82:y=520:enable='between(t,{start:.2f},{end:.2f})'"
+        f"drawtext=fontfile={font}:textfile='{textfile}':fontcolor=white:fontsize=46:"
+        f"line_spacing=14:x=82:y=1110:enable='between(t,{start:.2f},{end:.2f})'"
     )
     # Large active-scene progress indicator.
     filters.append(
