@@ -96,9 +96,9 @@ else:
         "drawbox=x=430:y=790:w=220:h=130:color=0x182a4a@1:t=fill",
         "drawbox=x=710:y=610:w=220:h=130:color=0x182a4a@1:t=fill",
         "drawbox=x=430:y=470:w=220:h=130:color=0x243b63@1:t=fill",
-        "drawline=x1=370:y1=675:x2=430:y2=535:color=white@0.35:w=5",
-        "drawline=x1=540:y1=600:x2=540:y2=790:color=white@0.35:w=5",
-        "drawline=x1=650:y1=855:x2=710:y2=675:color=white@0.35:w=5",
+        "drawbox=x=370:y=665:w=60:h=5:color=white@0.28:t=fill",
+        "drawbox=x=537:y=600:w=6:h=190:color=white@0.28:t=fill",
+        "drawbox=x=650:y=850:w=65:h=5:color=white@0.28:t=fill",
     ])
 
 labels = ["HOOK", "THE SIGNAL", "THE INTERESTING PART", "WHY IT MATTERS", "TAKEAWAY"]
