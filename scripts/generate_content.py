@@ -20,7 +20,8 @@ SCENARIOS = [
             "ME: Please stop.",
             "AI: Absolutely. I have added a follow-up meeting called: Please Stop."
         ],
-        "nodes": ["YOU", "AI", "MEETING"]
+        "nodes": ["YOU", "AI", "MEETING"],
+        "background_urls": ["https://assets.mixkit.co/videos/28286/28286-720.mp4","https://assets.mixkit.co/videos/4872/4872-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/4607/4607-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
     },
     {
         "title": "When the Bug Only Exists on Your Computer",
@@ -34,7 +35,8 @@ SCENARIOS = [
             "DEV: Weird. It was working five seconds ago.",
             "CI: Correct. I only become aware of bugs when you are confident."
         ],
-        "nodes": ["MY PC", "CI", "BUG"]
+        "nodes": ["MY PC", "CI", "BUG"],
+        "background_urls": ["https://assets.mixkit.co/videos/52076/52076-720.mp4","https://assets.mixkit.co/videos/48503/48503-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
     },
     {
         "title": "The Meeting That Could Have Been an Email",
@@ -48,7 +50,8 @@ SCENARIOS = [
             "MANAGER: One hour.",
             "ME: Perfect. We have solved the problem by becoming the problem."
         ],
-        "nodes": ["CALENDAR", "MEETING", "REGRET"]
+        "nodes": ["CALENDAR", "MEETING", "REGRET"],
+        "background_urls": ["https://assets.mixkit.co/videos/4547/4547-720.mp4","https://assets.mixkit.co/videos/4872/4872-720.mp4","https://assets.mixkit.co/videos/4607/4607-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
     },
     {
         "title": "When Online Shopping Reads Your Mind",
@@ -62,7 +65,8 @@ SCENARIOS = [
             "ME: How do you remember that?",
             "APP: I forget your password, but I remember your shopping dreams."
         ],
-        "nodes": ["SEARCH", "RECOMMEND", "WALLET"]
+        "nodes": ["SEARCH", "RECOMMEND", "WALLET"],
+        "background_urls": ["https://assets.mixkit.co/videos/4837/4837-720.mp4","https://assets.mixkit.co/videos/28286/28286-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/231/231-720.mp4"]
     },
     {
         "title": "My Gym Motivation Has a Software Update",
@@ -77,7 +81,8 @@ SCENARIOS = [
             "ME: That's aggressive.",
             "APP: Great. Now do the push-ups."
         ],
-        "nodes": ["MOTIVATION", "ME", "WORKOUT"]
+        "nodes": ["MOTIVATION", "ME", "WORKOUT"],
+        "background_urls": ["https://assets.mixkit.co/videos/52317/52317-720.mp4","https://assets.mixkit.co/videos/40248/40248-720.mp4","https://assets.mixkit.co/videos/52089/52089-720.mp4","https://assets.mixkit.co/videos/4506/4506-720.mp4","https://assets.mixkit.co/videos/52079/52079-720.mp4"]
     },
     {
         "title": "When Your Phone Knows You Too Well",
@@ -91,7 +96,8 @@ SCENARIOS = [
             "PHONE: At 2:14 AM?",
             "ME: Midnight research is more advanced."
         ],
-        "nodes": ["PHONE", "SCREEN TIME", "RESEARCH"]
+        "nodes": ["PHONE", "SCREEN TIME", "RESEARCH"],
+        "background_urls": ["https://assets.mixkit.co/videos/4837/4837-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/231/231-720.mp4","https://assets.mixkit.co/videos/4808/4808-720.mp4","https://assets.mixkit.co/videos/28286/28286-720.mp4"]
     }
 ]
 
@@ -116,6 +122,7 @@ payload = {
     "format": CFG["channel"],
     "candidates_considered": len(SCENARIOS),
     "visual_nodes": scenario["nodes"],
+    "background_urls": scenario.get("background_urls", []),
     "genre": "comedy",
     "theme": scenario["theme"],
     "original": True,
