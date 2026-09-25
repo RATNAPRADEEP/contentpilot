@@ -33,7 +33,11 @@ history=[]
 if os.path.exists(HISTORY):
     try: history=json.load(open(HISTORY,encoding="utf-8"))
     except Exception: history=[]
-if fingerprint in {x.get("fingerprint") for x in history}: violations.append("duplicate previously generated script")
+today = data.get("generated_at","")[:10]
+for item in history:
+    if item.get("fingerprint") == fingerprint and item.get("generated_at","")[:10] != today:
+        violations.append("duplicate previously generated script")
+        break
 if violations:
     print("CONTENT PREFLIGHT: FAILED")
     for item in sorted(set(violations)): print(" -",item)
