@@ -33,8 +33,18 @@ jobs:
       - name: Update dashboard
         run: python3 scripts/update_dashboard.py
 
-      - name: Install optional YouTube client
-        run: python3 -m pip install -r requirements-youtube.txt
+      - name: Check YouTube configuration
+        id: youtube
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: |
+          if [ -n "$YOUTUBE_CLIENT_ID" ] && [ -n "$YOUTUBE_CLIENT_SECRET" ] && [ -n "$YOUTUBE_REFRESH_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Save video as workflow artifact
         uses: actions/upload-artifact@v4
@@ -44,15 +54,18 @@ jobs:
           retention-days: 3
           if-no-files-found: error
 
+      - name: Install YouTube client
+        if: steps.youtube.outputs.configured == 'true'
+        run: python3 -m pip install -r requirements-youtube.txt
+
       - name: Upload to YouTube
-        if: ${{ env.YOUTUBE_CLIENT_ID != '' && env.YOUTUBE_CLIENT_SECRET != '' && env.YOUTUBE_REFRESH_TOKEN != '' }}
+        if: steps.youtube.outputs.configured == 'true'
         env:
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           YOUTUBE_PRIVACY: private
         run: python3 scripts/upload_youtube.py
-
       - name: Commit lightweight generated data
         run: |
           git config user.name "ContentPilot Bot"
