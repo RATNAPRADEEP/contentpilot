@@ -86,12 +86,12 @@ chosen = items[0] if items else {
 
 title = chosen["title"].strip()
 display_title = title.split(":")[0].strip() if len(title) > 70 and ":" in title else title
-display_title = re.sub(r"\\s+", " ", display_title).strip()
+display_title = re.sub(r"\s+", " ", display_title).strip()
 if len(display_title) > 64:
     display_title = display_title[:64].rsplit(" ", 1)[0] + "..."
 description = clean(chosen["description"])
-description = re.sub(r"^arXiv:\\S+\\s+Announce Type:\\s*\\w+\\s*", "", description, flags=re.I)
-description = re.sub(r"^Abstract:\\s*", "", description, flags=re.I)
+description = re.sub(r"^arXiv:\S+\s+Announce Type:\s*\w+\s*", "", description, flags=re.I)
+description = re.sub(r"^Abstract:\s*", "", description, flags=re.I)
 sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", description) if len(s.strip()) > 30]
 
 def clip(text, limit=180):
