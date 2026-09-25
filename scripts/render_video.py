@@ -378,10 +378,6 @@ for i,text_line in enumerate(scripts):
     fc=(
         "color=c="+bg+":s=1080x1920:r=30[base];"
         "[base]"+motif+"[m];"
-        "[0:v]scale=330:665[h0];"
-        "[1:v]scale=330:665[r0];"
-        "[2:v]scale=330:665[h1];"
-        "[3:v]scale=330:665[r1];"
         "[0:v]scale=350:705[h0s];"
         "[1:v]scale=350:705[r0s];"
         "[2:v]scale=370:745[h1s];"
