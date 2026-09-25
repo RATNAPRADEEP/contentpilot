@@ -18,6 +18,19 @@ CHARACTERS = {
     "maya": {"name": "Maya", "type": "human", "description": "confident young adult, observant, dry sense of humor"}
 }
 
+
+# Real-world background footage selected by scenario. These are Mixkit clips
+# whose pages state they are free for commercial/personal use under the Mixkit Stock Video Free License.
+BACKGROUND_URLS = {
+    "The Group Chat Before an Exam": "https://assets.mixkit.co/videos/4788/4788-720.mp4",
+    "When the Power Goes Out During Your Presentation": "https://assets.mixkit.co/videos/42648/42648-720.mp4",
+    "The Alarm Clock Negotiation": "https://assets.mixkit.co/videos/31414/31414-720.mp4",
+    "The Apartment Lift Stops at Every Floor": "https://assets.mixkit.co/videos/315/315-720.mp4",
+    "When the QR Payment Says 'Pending'": "https://assets.mixkit.co/videos/52076/52076-720.mp4",
+    "The Delivery Is Five Minutes Away": "https://assets.mixkit.co/videos/4889/4889-720.mp4",
+    "The Shopping Cart You Abandoned": "https://assets.mixkit.co/videos/4916/4916-720.mp4",
+    "When the Bus Arrives After You Stop Checking": "https://assets.mixkit.co/videos/4889/4889-720.mp4"
+}
 SCENARIOS = [
     {
         "title": "When the QR Payment Says 'Pending'",
@@ -159,7 +172,7 @@ payload = {
         "available": list(CHARACTERS.keys()),
         "registry": CHARACTERS
     },
-    "background_urls": [],
+    "background_urls": [BACKGROUND_URLS.get(scenario["title"], "")],
     "genre": "comedy",
     "theme": scenario["theme"],
     "original": True,
