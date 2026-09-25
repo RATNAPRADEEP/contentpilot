@@ -371,6 +371,10 @@ for i,text_line in enumerate(scripts):
     byte_active = robot_happy if action in ("alarm_ringing","sticker","bus_arrives","notification","saved_item","reminder","seen") else robot_talk
     h = arjun_active if actor == "arjun" else arjun_reactive
     r = byte_active if actor == "byte" else robot
+    # Four video inputs are kept for the renderer's pose pipeline; the action-aware
+    # selection above determines which actual assets fill them.
+    h0 = h1 = h
+    r0 = r1 = r
 
     # Animated, scene-specific illustrated backgrounds.
     # Everything is generated locally with FFmpeg; no stock footage is used.
