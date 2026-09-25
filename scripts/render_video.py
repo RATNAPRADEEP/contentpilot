@@ -62,11 +62,14 @@ def make_character(path, kind, mood, step=0):
             ld.ellipse((cx-rr, cy-rr, cx+rr, cy+rr), fill=(*color[:3], max(0,alpha)))
         im.alpha_composite(layer.filter(ImageFilter.GaussianBlur(14)))
 
-    if kind == "human":
+    if kind in ("human", "maya"):
         skin=(241,178,137,255); skin2=(211,137,105,255)
         hair=(38,25,38,255); hair_hi=(67,42,69,255)
         jacket=(44,62,92,255); shirt=(238,241,245,255)
         ink=(24,24,34,255); white=(255,255,255,255)
+        if kind == "maya":
+            hair=(72,35,74,255); hair_hi=(120,65,122,255)
+            jacket=(86,54,88,255); shirt=(250,236,245,255)
 
         poly([(85,760),(108,565),(178,515),(342,515),(412,565),(450,760)], jacket, ink, 5)
         poly([(178,525),(260,620),(342,525),(315,760),(205,760)], shirt, (70,78,92,255), 3)
@@ -109,8 +112,8 @@ def make_character(path, kind, mood, step=0):
             d.ellipse((40,620,95,675), fill=skin, outline=skin2, width=4)
             d.ellipse((420,652,478,708), fill=skin, outline=skin2, width=4)
             left_leg=(205,755,235,1000); right_leg=(315,755,285,1000)
-        d.line(left_leg[:2], left_leg[2:], fill=jacket, width=58)
-        d.line(right_leg[:2], right_leg[2:], fill=jacket, width=58)
+        d.line([left_leg[:2], left_leg[2:]], fill=jacket, width=58)
+        d.line([right_leg[:2], right_leg[2:]], fill=jacket, width=58)
         d.ellipse((145 if step==0 else 205,980,215 if step==0 else 270,1030), fill=(28,30,42,255))
         d.ellipse((325 if step==0 else 260,980,395 if step==0 else 330,1030), fill=(28,30,42,255))
 
@@ -159,8 +162,8 @@ def make_character(path, kind, mood, step=0):
             d.ellipse((42,620,98,675), fill=skin, outline=skin2, width=4)
             d.ellipse((420,652,480,708), fill=skin, outline=skin2, width=4)
             left_leg=(210,755,235,1000); right_leg=(310,755,285,1000)
-        d.line(left_leg[:2], left_leg[2:], fill=suit2, width=58)
-        d.line(right_leg[:2], right_leg[2:], fill=suit2, width=58)
+        d.line([left_leg[:2], left_leg[2:]], fill=suit2, width=58)
+        d.line([right_leg[:2], right_leg[2:]], fill=suit2, width=58)
         d.ellipse((150 if step==0 else 205,980,220 if step==0 else 270,1030), fill=(5,38,54,255))
         d.ellipse((320 if step==0 else 260,980,390 if step==0 else 330,1030), fill=(5,38,54,255))
         for y in range(180,735,42):
@@ -180,10 +183,10 @@ make_character(human,"human","neutral",0)
 make_character(human_shock,"human","shocked",1)
 make_character(human_talk,"human","talk",0)
 make_character(human_talk_b,"human","talk",1)
-make_character(robot,"robot","neutral",0)
-make_character(robot_happy,"robot","happy",1)
-make_character(robot_talk,"robot","talk",0)
-make_character(robot_talk_b,"robot","talk",1)
+make_character(robot,"maya","neutral",0)
+make_character(robot_happy,"maya","happy",1)
+make_character(robot_talk,"maya","talk",0)
+make_character(robot_talk_b,"maya","talk",1)
 
 # ---------- Procedural comedy audio ----------
 def music_wav(path, seconds, style):
