@@ -27,6 +27,9 @@ jobs:
       - name: Discover and generate
         run: python3 scripts/generate_content.py
 
+      - name: Originality and content preflight
+        run: python3 scripts/content_preflight.py
+
       - name: Render video
         run: python3 scripts/render_video.py
 
@@ -70,6 +73,6 @@ jobs:
         run: |
           git config user.name "ContentPilot Bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add generated/latest.json generated/latest.txt docs
+          git add generated/latest.json generated/latest.txt generated/originality_history.json docs
           git diff --cached --quiet || git commit -m "chore: automated content build"
           git push
