@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json, math, os, re, struct, subprocess, wave, zlib
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 data = json.load(open(os.path.join(ROOT, "generated/latest.json"), encoding="utf-8"))
@@ -40,76 +41,104 @@ def duration(path):
     ], text=True).strip()
     return float(out)
 
-# ---------- Original illustrated characters ----------
-def png_rgba(path, w, h, draw_fn):
-    px = bytearray(w*h*4)
-    def setp(x,y,c):
-        if 0 <= x < w and 0 <= y < h:
-            i=(y*w+x)*4
-            px[i:i+4]=bytes(c)
-    def rect(x0,y0,x1,y1,c):
-        for y in range(max(0,int(y0)),min(h,int(y1))):
-            for x in range(max(0,int(x0)),min(w,int(x1))):
-                setp(x,y,c)
-    def circle(cx,cy,r,c):
-        rr=r*r
-        for y in range(max(0,int(cy-r)),min(h,int(cy+r)+1)):
-            for x in range(max(0,int(cx-r)),min(w,int(cx+r)+1)):
-                if (x-cx)*(x-cx)+(y-cy)*(y-cy) <= rr:
-                    setp(x,y,c)
-    def line(x0,y0,x1,y1,th,c):
-        dx=x1-x0; dy=y1-y0; n=max(abs(dx),abs(dy),1)
-        for k in range(n+1):
-            x=int(x0+dx*k/n); y=int(y0+dy*k/n)
-            rect(x-th,y-th,x+th+1,y+th+1,c)
-    draw_fn(setp,rect,circle,line)
-    raw=bytearray()
-    for y in range(h):
-        raw.append(0)
-        raw.extend(px[y*w*4:(y+1)*w*4])
-    def chunk(t,d):
-        return struct.pack(">I",len(d))+t+d+struct.pack(">I",zlib.crc32(t+d)&0xffffffff)
-    png=b"\x89PNG\r\n\x1a\n"
-    png+=chunk(b"IHDR",struct.pack(">IIBBBBB",w,h,8,6,0,0,0))
-    png+=chunk(b"IDAT",zlib.compress(bytes(raw),9))+chunk(b"IEND",b"")
-    open(path,"wb").write(png)
-
+# ---------- Original anime-inspired characters ----------
+# Original procedural character designs. They are not based on an existing
+# anime, film, game, manga, celebrity, or other copyrighted character.
 def make_character(path, kind, mood):
-    def art(setp,rect,circle,line):
-        skin=(247,190,145,255)
-        outline=(20,25,35,255)
-        if kind=="robot":
-            body=(45,185,210,255); dark=(12,35,55,255); eye=(245,255,255,255)
-            # antenna
-            line(180,72,180,35,7,body); circle(180,23,11,(255,208,65,255))
-            # head
-            rect(88,82,272,235,dark); circle(180,158,66,body)
-            circle(146,150,12,eye); circle(214,150,12,eye)
-            if mood=="shocked":
-                circle(180,199,17,(5,10,20,255))
-            elif mood=="happy":
-                line(150,198,210,198,6,(5,10,20,255))
-            else:
-                line(150,200,210,200,5,(5,10,20,255))
-            # body + arms
-            rect(105,235,255,435,body)
-            line(105,270,45,345,18,body); line(255,270,315,345,18,body)
-            rect(78,435,282,468,dark)
+    W, H = 520, 760
+    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im, "RGBA")
+
+    def poly(points, fill, outline=None, width=1):
+        d.polygon(points, fill=fill)
+        if outline:
+            d.line(points + [points[0]], fill=outline, width=width, joint="curve")
+
+    def glow(cx, cy, r, color):
+        layer = Image.new("RGBA", (W, H), (0,0,0,0))
+        ld = ImageDraw.Draw(layer, "RGBA")
+        for rr in range(r, 0, -10):
+            alpha = int(color[3] * (1 - rr/r) * 0.18)
+            ld.ellipse((cx-rr, cy-rr, cx+rr, cy+rr), fill=(*color[:3], max(0,alpha)))
+        im.alpha_composite(layer.filter(ImageFilter.GaussianBlur(14)))
+
+    if kind == "human":
+        skin=(241,178,137,255); skin2=(211,137,105,255)
+        hair=(38,25,38,255); hair_hi=(67,42,69,255)
+        jacket=(44,62,92,255); shirt=(238,241,245,255)
+        ink=(24,24,34,255); white=(255,255,255,255)
+
+        poly([(85,760),(108,565),(178,515),(342,515),(412,565),(450,760)], jacket, ink, 5)
+        poly([(178,525),(260,620),(342,525),(315,760),(205,760)], shirt, (70,78,92,255), 3)
+        d.rounded_rectangle((214,455,306,555), 28, fill=skin, outline=skin2, width=4)
+        d.ellipse((132,270,190,365), fill=skin, outline=skin2, width=4)
+        d.ellipse((330,270,388,365), fill=skin, outline=skin2, width=4)
+        d.ellipse((150,125,370,490), fill=skin, outline=ink, width=5)
+        poly([(145,250),(125,190),(153,170),(132,122),(190,138),(181,78),
+              (232,105),(260,52),(281,105),(336,70),(327,132),(382,112),
+              (360,188),(372,255),(335,220),(310,155),(267,178),(226,148),
+              (190,205)], hair, ink, 5)
+        poly([(166,169),(188,105),(215,135),(260,82),(288,126),(335,102),(317,160),
+              (275,142),(238,165),(201,145)], hair_hi)
+        d.arc((183,255,236,292), 190, 350, fill=ink, width=8)
+        d.arc((282,255,335,292), 190, 350, fill=ink, width=8)
+        for box, iris in [((180,275,241,345),(58,112,176,255)),((279,275,340,345),(58,112,176,255))]:
+            d.ellipse(box, fill=white, outline=ink, width=5)
+            x=(box[0]+box[2])//2; y=(box[1]+box[3])//2+4
+            d.ellipse((x-18,y-22,x+18,y+25), fill=iris, outline=ink, width=3)
+            d.ellipse((x-7,y-18,x+7,y+18), fill=(20,28,55,255))
+            d.ellipse((x-10,y-15,x-2,y-7), fill=white)
+        d.line((258,330,250,380,270,382), fill=skin2, width=5)
+        if mood=="shocked":
+            d.ellipse((242,400,278,445), fill=(115,45,55,255), outline=ink, width=4)
+        elif mood=="happy":
+            d.arc((225,390,295,450), 10, 170, fill=(120,42,55,255), width=8)
         else:
-            shirt=(244,140,65,255)
-            # hair/head
-            circle(180,155,66,skin); rect(112,91,248,133,(32,24,22,255))
-            circle(150,155,9,(20,20,20,255)); circle(210,155,9,(20,20,20,255))
-            if mood=="shocked":
-                circle(180,204,18,(125,35,35,255))
-            elif mood=="happy":
-                line(150,198,210,198,6,(125,35,35,255))
-            else:
-                line(152,208,208,208,4,(125,35,35,255))
-            rect(105,235,255,430,shirt)
-            line(105,270,45,345,18,skin); line(255,270,315,345,18,skin)
-            rect(78,430,282,468,outline)
-    png_rgba(path,360,500,art)
+            d.arc((230,395,290,435), 15, 165, fill=(120,42,55,255), width=6)
+        d.line((112,590,45,675), fill=jacket, width=45)
+        d.line((405,590,475,650), fill=jacket, width=45)
+        d.ellipse((22,650,78,704), fill=skin, outline=skin2, width=4)
+        d.ellipse((448,628,500,682), fill=skin, outline=skin2, width=4)
+
+    else:
+        skin=(174,228,242,255); skin2=(72,174,204,255)
+        hair=(22,74,110,255); hair_hi=(50,154,190,255)
+        suit=(19,126,157,255); suit2=(33,190,205,255)
+        ink=(8,28,42,255); white=(239,255,255,255)
+        glow(260,330,230,(32,205,235,150))
+        poly([(88,760),(115,570),(188,510),(332,510),(405,570),(438,760)], suit, ink, 5)
+        poly([(190,520),(260,610),(330,520),(310,760),(210,760)], suit2, (95,236,240,255), 3)
+        d.rounded_rectangle((215,455,305,550), 28, fill=skin, outline=skin2, width=4)
+        d.ellipse((142,112,378,490), fill=skin, outline=ink, width=5)
+        poly([(138,245),(124,178),(155,152),(136,103),(193,124),(182,62),
+              (232,96),(265,42),(286,102),(343,62),(330,127),(391,105),
+              (366,180),(380,252),(338,218),(310,145),(270,175),(226,142),
+              (188,202)], hair, ink, 5)
+        poly([(158,165),(190,91),(218,124),(262,78),(291,121),(342,92),(320,150),
+              (278,136),(236,159),(198,139)], hair_hi)
+        d.line((190,190,225,175,248,193), fill=(142,248,255,210), width=4)
+        d.line((296,190,320,175), fill=(142,248,255,210), width=4)
+        for box in [(175,270,242,347),(278,270,345,347)]:
+            d.ellipse(box, fill=(8,45,62,255), outline=ink, width=5)
+            x=(box[0]+box[2])//2; y=(box[1]+box[3])//2
+            d.ellipse((x-17,y-23,x+17,y+23), fill=(64,235,245,255))
+            d.ellipse((x-6,y-20,x+7,y+20), fill=(3,34,52,255))
+            d.ellipse((x-10,y-16,x-2,y-8), fill=white)
+        d.line((257,330,250,380,270,382), fill=skin2, width=5)
+        if mood=="shocked":
+            d.ellipse((240,398,280,448), fill=(5,38,54,255), outline=ink, width=4)
+        elif mood=="happy":
+            d.arc((225,390,295,450), 10, 170, fill=(5,55,70,255), width=8)
+        else:
+            d.arc((230,395,290,435), 15, 165, fill=(5,55,70,255), width=6)
+        d.line((112,590,45,675), fill=suit2, width=45)
+        d.line((405,590,475,650), fill=suit2, width=45)
+        d.ellipse((20,650,80,710), fill=skin, outline=skin2, width=4)
+        d.ellipse((445,628,505,688), fill=skin, outline=skin2, width=4)
+        for y in range(180,735,42):
+            d.line((120,y,400,y), fill=(190,255,255,32), width=2)
+
+    im.save(path, "PNG")
 
 human=os.path.join(build,"character-human.png")
 human_shock=os.path.join(build,"character-human-shock.png")
