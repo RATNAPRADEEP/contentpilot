@@ -168,7 +168,7 @@ payload = {
     "candidates_considered": len(SCENARIOS),
     "visual_nodes": scenario["nodes"],
     "characters": {
-        "primary": ["arjun", "byte"],
+        "primary": ["arjun", "maya"],
         "available": list(CHARACTERS.keys()),
         "registry": CHARACTERS
     },
