@@ -10,6 +10,14 @@ os.makedirs(OUT, exist_ok=True)
 # Original fictional sketches built from ordinary real-world situations.
 # No real people, brands, copyrighted characters, song lyrics, clips, or source
 # dialogue are used. Real-world situations are only the starting point.
+# Persistent original character bible. These identities are reused across episodes.
+# Visual designs remain original and can be expanded with new poses/expressions later.
+CHARACTERS = {
+    "arjun": {"name": "Arjun", "type": "human", "description": "young adult, practical, expressive, easily stressed by everyday problems"},
+    "byte": {"name": "Byte", "type": "ai", "description": "friendly humanoid AI, literal-minded, calm, unexpectedly funny"},
+    "maya": {"name": "Maya", "type": "human", "description": "confident young adult, observant, dry sense of humor"}
+}
+
 SCENARIOS = [
     {
         "title": "When the QR Payment Says 'Pending'",
@@ -146,6 +154,11 @@ payload = {
     "format": CFG["channel"],
     "candidates_considered": len(SCENARIOS),
     "visual_nodes": scenario["nodes"],
+    "characters": {
+        "primary": ["arjun", "byte"],
+        "available": list(CHARACTERS.keys()),
+        "registry": CHARACTERS
+    },
     "background_urls": [],
     "genre": "comedy",
     "theme": scenario["theme"],
