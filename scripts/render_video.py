@@ -221,8 +221,10 @@ for i,text_line in enumerate(scripts):
     fc=(
         f"color=c={bg}:s=1080x1920:r=30[base];"
         f"[base]{motif}[m];"
-        f"[m][1:v]overlay=x=60:y=730:scale=0.62:enable='between(t,0,{dur:.2f})'[c1];"
-        f"[c1][2:v]overlay=x=600:y=680:scale=0.62:enable='between(t,0,{dur:.2f})'[c2];"
+        f"[1:v]scale=270:375[h];"
+        f"[2:v]scale=270:375[r];"
+        f"[m][h]overlay=x=60:y=730:enable='between(t,0,{dur:.2f})'[c1];"
+        f"[c1][r]overlay=x=600:y=680:enable='between(t,0,{dur:.2f})'[c2];"
         f"[c2]drawbox=x=55:y=75:w=970:h=115:color=05070d@0.90:t=fill,"
         f"drawtext=fontfile={font}:text='CONTENTPILOT':fontcolor=white:fontsize=34:x=80:y=112,"
         f"drawtext=fontfile={font}:text='COMEDY':fontcolor=38bdf8:fontsize=34:x=325:y=112,"
@@ -253,7 +255,7 @@ for i,text_line in enumerate(scripts):
 concat=os.path.join(build,"concat.txt")
 with open(concat,"w",encoding="utf-8") as f:
     for seg in segments:
-        f.write("file '"+seg.replace("'","'\\''")+"\n")
+        f.write("file '"+seg.replace("'","'\\''")+"'\n")
 
 run(["ffmpeg","-y","-f","concat","-safe","0","-i",concat,"-c","copy",video])
 print("Rendered:",video)
