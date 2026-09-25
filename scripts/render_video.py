@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 data = json.load(open(os.path.join(ROOT, "generated/latest.json"), encoding="utf-8"))
+theme = data.get("theme", "").lower()
 build = os.path.join(ROOT, "build")
 os.makedirs(build, exist_ok=True)
 video = os.path.join(ROOT, "generated", "contentpilot-latest.mp4")
@@ -244,7 +245,8 @@ for i,text_line in enumerate(scripts):
     raw = safe(text_line)
     speaker, _, words = raw.partition(":")
     ai_speakers = {"CHAT", "ALARM", "PHONE", "POWER", "LIFT"}
-    speaker_name = "Maya" if speaker in {"CASHIER","FRIEND","NEIGHBOR"} else ("Byte" if speaker in ai_speakers else "Arjun")
+    speaker_name = "Byte" if speaker in ai_speakers else "Arjun"
+    speaker_key = "byte" if speaker_name == "Byte" else "arjun"
     subtitle = f"{speaker_name}: {words.strip()}" if words.strip() else speaker_name
     open(scene_txt,"w",encoding="utf-8").write(wrap(subtitle, width=32, max_lines=2))
 
@@ -257,78 +259,145 @@ for i,text_line in enumerate(scripts):
     h=human_shock if i in (2,4,5) else human_talk
     r=robot_happy if i in (1,3,5) else robot_talk
 
-    # Designed animated comic environment instead of unrelated stock footage.
-    # Each scene gets a different visual motif, while the characters stay consistent.
-    if i % 3 == 0:
-        bg="0f172a"
+    # Animated, scene-specific illustrated backgrounds.
+    # Everything is generated locally with FFmpeg; no stock footage is used.
+    if "morning" in theme:
+        bg="0b1020"
         motif=(
-            "drawbox=x=0:y=0:w=1080:h=1920:color=0f172a:t=fill,"
-            "drawbox=x=70:y=260:w=940:h=620:color=16213a:t=fill,"
-            "drawbox=x=125:y=700:w=830:h=30:color=38bdf8:t=fill,"
-            "drawbox=x=300:y=545:w=480:h=250:color=0b1220:t=fill,"
-            "drawbox=x=345:y=585:w=390:h=170:color=1e293b:t=fill,"
-            "drawbox=x=420:y=470:w=240:h=90:color=1e293b:t=fill"
+            "drawbox=x=0:y=0:w=1080:h=1920:color=0b1020:t=fill,"
+            "drawbox=x=70:y=170:w=940:h=560:color=18243a:t=fill,"
+            "drawbox=x=120:y=220:w=380:h=420:color=263c5c:t=fill,"
+            "drawbox=x=500:y=220:w=380:h=420:color=263c5c:t=fill,"
+            "drawbox=x=70:y=790:w=940:h=430:color=5b4050:t=fill,"
+            "drawbox=x=120:y=1040:w=840:h=500:color=7b5260:t=fill,"
+            "drawbox=x='700+10*sin(t*1.8)':y='730+8*sin(t*1.8)':w=170:h=90:color=1f2937:t=fill,"
+            "drawbox=x='745+10*sin(t*1.8)':y='745+8*sin(t*1.8)':w=80:h=55:color=facc15:t=fill,"
+            "drawbox=x='735+10*sin(t*1.8)':y='760+8*sin(t*1.8)':w=100:h=20:color=111827:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='07-00':fontcolor=white:fontsize=28:x='750+5*sin(t*1.8)':y='755+8*sin(t*1.8)',"
+            "drawbox=x='0+30*sin(t*0.5)':y=0:w=1080:h=180:color=fbbf24@0.08:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='MORNING NEGOTIATION':fontcolor=white@0.35:fontsize=24:x=70:y=80"
         )
-    elif i % 3 == 1:
+    elif "digital payments" in theme:
+        bg="101827"
+        motif=(
+            "drawbox=x=0:y=0:w=1080:h=1920:color=101827:t=fill,"
+            "drawbox=x=70:y=180:w=940:h=650:color=24334a:t=fill,"
+            "drawbox=x=120:y=250:w=840:h=180:color=111827:t=fill,"
+            "drawbox=x='380+22*sin(t*2)':y=485:w=320:h=220:color=0f766e:t=fill,"
+            "drawbox=x='430+22*sin(t*2)':y=535:w=220:h=110:color=ecfeff:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='PAYMENT PENDING':fontcolor=white:fontsize=34:x='350+18*sin(t*2)':y=560,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='checking...':fontcolor=67e8f9:fontsize=24:x='480+18*sin(t*2)':y=615"
+        )
+    elif "food delivery" in theme:
+        bg="17121d"
+        motif=(
+            "drawbox=x=0:y=0:w=1080:h=1920:color=17121d:t=fill,"
+            "drawbox=x=70:y=180:w=940:h=620:color=30243b:t=fill,"
+            "drawbox=x=110:y=230:w=860:h=360:color=111827:t=fill,"
+            "drawbox=x='740-70*sin(t*1.4)':y='610+15*sin(t*2)':w=170:h=170:color=f59e0b:t=fill,"
+            "drawbox=x='775-70*sin(t*1.4)':y='645+15*sin(t*2)':w=100:h=100:color=fff7ed:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='5 MINUTES AWAY':fontcolor=white:fontsize=38:x='310-45*sin(t*1.4)':y=330"
+        )
+    elif "apartment" in theme:
+        bg="0e1726"
+        motif=(
+            "drawbox=x=0:y=0:w=1080:h=1920:color=0e1726:t=fill,"
+            "drawbox=x=140:y=170:w=800:h=760:color=263447:t=fill,"
+            "drawbox=x=210:y=250:w=660:h=620:color=0b1220:t=fill,"
+            "drawbox=x=225:y=265:w=630:h=500:color=334155:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='LIFT':fontcolor=white:fontsize=34:x='500+8*sin(t*2)':y=300,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='2   3   4   5':fontcolor=94a3b8:fontsize=30:x=405:y=845,"
+            "drawbox=x='270+12*sin(t*2.2)':y=1020:w=540:h=22:color=64748b:t=fill"
+        )
+    elif "student life" in theme:
         bg="111827"
         motif=(
             "drawbox=x=0:y=0:w=1080:h=1920:color=111827:t=fill,"
-            "drawbox=x=65:y=270:w=950:h=520:color=1f2937:t=fill,"
-            "drawbox=x=120:y=335:w=840:h=90:color=0b1220:t=fill,"
-            "drawbox=x=120:y=455:w=840:h=65:color=273449:t=fill,"
-            "drawbox=x=120:y=555:w=620:h=65:color=273449:t=fill,"
-            "drawbox=x=120:y=655:w=720:h=65:color=273449:t=fill"
+            "drawbox=x=80:y=170:w=920:h=850:color=1f2937:t=fill,"
+            "drawbox=x=145:y=240:w=790:h=700:color=0b1220:t=fill,"
+            "drawbox=x=185:y=310:w=710:h=90:color=243447:t=fill,"
+            "drawbox=x=185:y=450:w=710:h=90:color=243447:t=fill,"
+            "drawbox=x=185:y=590:w=710:h=90:color=243447:t=fill,"
+            "drawbox=x='185+18*sin(t*3)':y=730:w=430:h=90:color=334155:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='17 PEOPLE SEEN':fontcolor=fb7185:fontsize=30:x='520+12*sin(t*3)':y=760,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='EXAM TOMORROW':fontcolor=94a3b8:fontsize=26:x=360:y=255"
+        )
+    elif "commuting" in theme:
+        bg="0b1320"
+        motif=(
+            "drawbox=x=0:y=0:w=1080:h=1920:color=0b1320:t=fill,"
+            "drawbox=x=70:y=170:w=940:h=500:color=1e3a5f:t=fill,"
+            "drawbox=x=120:y=230:w=840:h=350:color=60a5fa:t=fill,"
+            "drawbox=x=70:y=670:w=940:h=250:color=334155:t=fill,"
+            "drawbox=x='160+140*sin(t*0.9)':y=700:w=330:h=180:color=facc15:t=fill,"
+            "drawbox=x='200+140*sin(t*0.9)':y=735:w=250:h=65:color=0f172a:t=fill,"
+            "drawbox=x='200+140*sin(t*0.9)':y=825:w=70:h=35:color=111827:t=fill,"
+            "drawbox=x='380+140*sin(t*0.9)':y=825:w=70:h=35:color=111827:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='BUS STOP':fontcolor=white:fontsize=36:x=390:y=270"
+        )
+    elif "online shopping" in theme:
+        bg="101827"
+        motif=(
+            "drawbox=x=0:y=0:w=1080:h=1920:color=101827:t=fill,"
+            "drawbox=x=120:y=180:w=840:h=800:color=1f2937:t=fill,"
+            "drawbox=x=180:y=250:w=720:h=110:color=0b1220:t=fill,"
+            "drawbox=x=180:y=410:w=320:h=430:color=334155:t=fill,"
+            "drawbox=x=540:y=410:w=320:h=430:color=334155:t=fill,"
+            "drawbox=x='585+20*sin(t*2)':y='465+12*sin(t*2)':w=220:h=220:color=f472b6:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='YOUR CART MISSES YOU':fontcolor=white:fontsize=30:x='250+15*sin(t*2)':y=300"
         )
     else:
-        bg="172033"
+        bg="101827"
         motif=(
-            "drawbox=x=0:y=0:w=1080:h=1920:color=172033:t=fill,"
-            "drawbox=x=65:y=250:w=950:h=650:color=21304a:t=fill,"
-            "drawbox=x=110:y=300:w=860:h=95:color=0b1220:t=fill,"
-            "drawbox=x=110:y=440:w=860:h=110:color=334766:t=fill,"
-            "drawbox=x=110:y=600:w=690:h=110:color=334766:t=fill,"
-            "drawbox=x=110:y=760:w=800:h=110:color=334766:t=fill"
+            "drawbox=x=0:y=0:w=1080:h=1920:color=101827:t=fill,"
+            "drawbox=x=70:y=170:w=940:h=620:color=1e293b:t=fill,"
+            "drawbox=x=140:y=250:w=800:h=430:color=0b1220:t=fill,"
+            "drawbox=x='250+35*sin(t*1.1)':y=330:w=580:h=240:color=334155:t=fill,"
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='PRESENTATION MODE':fontcolor=white:fontsize=34:x='340+25*sin(t*1.1)':y=360"
         )
 
-    # Clean short-form presentation: no dialogue panel.
-    # Full-body recurring anime characters remain the only people on screen.
-    # Their alternating poses plus continuous body motion create simple acting.
-    name_labels = (
-        f"drawbox=x=75:y=500:w=230:h=58:color=000000@0.50:t=fill,"
-        f"drawtext=fontfile={font}:text='ARJUN':fontcolor=white:fontsize=24:x=92:y=515,"
-        f"drawbox=x=775:y=500:w=230:h=58:color=000000@0.50:t=fill,"
-        f"drawtext=fontfile={font}:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515"
-    )
+    # The active speaker talks; the listener stays neutral/reactive.
+    if speaker_key == "arjun":
+        h0, h1 = human_talk, human_talk_b
+        r0, r1 = robot, robot_happy
+    else:
+        h0, h1 = human, human_shock
+        r0, r1 = robot_talk, robot_talk_b
 
+    name_labels = (
+        "drawbox=x=75:y=500:w=230:h=58:color=000000@0.50:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ARJUN':fontcolor=white:fontsize=24:x=92:y=515,"
+        "drawbox=x=775:y=500:w=230:h=58:color=000000@0.50:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515"
+    )
     subtitle_style = (
-        f"drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
-        f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
-        f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.28:fontsize=14:x=95:y=1845"
+        "drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile='"+scene_txt+"':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ContentPilot Original':fontcolor=white@0.28:fontsize=14:x=95:y=1845"
     )
 
     fc=(
-        f"color=c={bg}:s=1080x1920:r=30[base];"
-        f"[base]{motif}[m];"
-        f"[0:v]scale=330:665[h0];"
-        f"[1:v]scale=330:665[r0];"
-        f"[2:v]scale=330:665[h1];"
-        f"[3:v]scale=330:665[r1];"
-        f"[m][h0]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
-        f"[c1][h1]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
-        f"[c2][r0]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
-        f"[c3][r1]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
-        f"[c4]{name_labels},{subtitle_style}[v];"
-        f"[4:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
-        f"[5:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
-        f"[6:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[sfx];"
-        f"[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
-        f"alimiter=limit=0.92[a]"
+        "color=c="+bg+":s=1080x1920:r=30[base];"
+        "[base]"+motif+"[m];"
+        "[0:v]scale=330:665[h0];"
+        "[1:v]scale=330:665[r0];"
+        "[2:v]scale=330:665[h1];"
+        "[3:v]scale=330:665[r1];"
+        "[m][h0]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
+        "[c1][h1]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
+        "[c2][r0]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
+        "[c3][r1]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
+        "[c4]"+name_labels+","+subtitle_style+"[v];"
+        "[4:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
+        "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
+        "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
+        "[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
+        "alimiter=limit=0.92[a]"
     )
-
 
     cmd=[
         "ffmpeg","-y",
-        "-i",h,"-i",r,"-i",human_talk_b,"-i",robot_talk_b,"-i",voice,"-i",music,"-i",sfx,
+        "-i",h0,"-i",r0,"-i",h1,"-i",r1,"-i",voice,"-i",music,"-i",sfx,
         "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
         "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
         "-c:a","aac","-b:a","128k",seg
