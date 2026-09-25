@@ -183,10 +183,10 @@ make_character(human,"human","neutral",0)
 make_character(human_shock,"human","shocked",1)
 make_character(human_talk,"human","talk",0)
 make_character(human_talk_b,"human","talk",1)
-make_character(robot,"maya","neutral",0)
-make_character(robot_happy,"maya","happy",1)
-make_character(robot_talk,"maya","talk",0)
-make_character(robot_talk_b,"maya","talk",1)
+make_character(robot,"robot","neutral",0)
+make_character(robot_happy,"robot","happy",1)
+make_character(robot_talk,"robot","talk",0)
+make_character(robot_talk_b,"robot","talk",1)
 
 # ---------- Procedural comedy audio ----------
 def music_wav(path, seconds, style):
@@ -293,7 +293,15 @@ for i,text_line in enumerate(scripts):
     # Clean short-form presentation: no dialogue panel.
     # Characters and environment stay visually dominant; dialogue is shown as
     # compact bottom subtitles with a subtle translucent background for readability.
-    subtitle_style = (
+        # Recurring character names are part of the visual identity.
+    name_labels = (
+        f"drawbox=x=75:y=500:w=230:h=58:color=000000@0.50:t=fill,"
+        f"drawtext=fontfile={font}:text='ARJUN':fontcolor=white:fontsize=24:x=92:y=515,"
+        f"drawbox=x=775:y=500:w=230:h=58:color=000000@0.50:t=fill,"
+        f"drawtext=fontfile={font}:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515,"
+    )
+
+subtitle_style = (
         f"drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
         f""
         f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
@@ -311,7 +319,7 @@ for i,text_line in enumerate(scripts):
         f"[c1][h1]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
         f"[c2][r0]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
         f"[c3][r1]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
-        f"[c4]{subtitle_style}[v];"
+        f"[c4]{name_labels},{subtitle_style}[v];"
         f"[4:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
         f"[5:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
         f"[6:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[sfx];"
