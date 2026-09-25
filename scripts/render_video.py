@@ -168,8 +168,6 @@ def make_character(path, kind, mood, step=0):
     line([(205,700),(190,930)], (255,255,255,28), 3)
     line([(315,700),(330,930)], (255,255,255,28), 3)
     if is_robot:
-        for y in range(165,330,34):
-            line([(145,y),(375,y)], (190,255,255,25), 2)
 
     # Small breathing/bounce anchor detail
     d.ellipse((247,655,273,681), fill=(255,255,255,35))
@@ -201,35 +199,50 @@ def make_scene_background(path, theme, scene_index):
     d = ImageDraw.Draw(im)
 
     if "morning" in theme:
-        for y in range(0, 1250):
-            t = y / 1250
-            c = (int(35-10*t), int(50-12*t), int(75-18*t))
+        # Warm, layered bedroom: wall, window, bed, nightstand, lamp, rug and floor.
+        for y in range(0, 1180):
+            t = y / 1180
+            c = (int(32-8*t), int(48-10*t), int(72-15*t))
             d.line((0, y, W, y), fill=c)
-        d.rounded_rectangle((100,170,520,650),24,fill=(24,33,53),outline=(74,90,118),width=8)
-        d.rectangle((125,195,495,625),fill=(119,157,190))
-        d.ellipse((250,270,390,410),fill=(246,190,91))
-        d.polygon([(65,135),(205,145),(185,650),(80,700)],fill=(66,47,73))
-        d.polygon([(555,145),(695,135),(670,700),(570,650)],fill=(66,47,73))
-        for y in range(1250,H):
-            d.line((0,y,W,y),fill=(112,78,70))
-        d.rounded_rectangle((120,1370,960,1810),40,fill=(113,77,84),outline=(145,102,106),width=6)
-        d.rounded_rectangle((150,760,930,1110),35,fill=(50,45,57),outline=(91,82,99),width=8)
-        d.rounded_rectangle((115,930,965,1230),35,fill=(198,198,203),outline=(130,130,140),width=6)
-        d.rounded_rectangle((250,1000,930,1240),30,fill=(92,74,105))
-        d.rounded_rectangle((175,965,410,1080),25,fill=(232,229,222),outline=(180,178,176),width=5)
-        d.rounded_rectangle((700,680,930,880),18,fill=(92,63,55),outline=(125,89,72),width=7)
-        d.rectangle((730,875,760,1010),fill=(72,48,43))
-        d.rectangle((870,875,900,1010),fill=(72,48,43))
-        d.rectangle((800,565,825,690),fill=(61,48,48))
-        d.polygon([(740,565),(885,565),(850,475),(775,475)],fill=(236,192,108),outline=(130,96,58))
-        d.rounded_rectangle((755,710,875,775),12,fill=(22,27,34),outline=(245,196,72),width=5)
-        d.text((786,726),"07:00",fill=(245,196,72))
-        d.rounded_rectangle((480,1210,590,1265),12,fill=(28,32,40),outline=(150,160,180),width=4)
-        for box in [(780,220,900,350),(620,250,700,330)]:
-            d.rounded_rectangle(box,12,fill=(53,67,92),outline=(99,115,140),width=4)
-        for x,y in [(1000,780),(980,740),(1030,720)]:
-            d.ellipse((x-28,y-80,x+28,y),fill=(56,112,76))
-        d.rectangle((980,800,1040,900),fill=(134,91,66))
+        # window and dawn light
+        d.rounded_rectangle((95,150,515,650),26,fill=(22,31,49),outline=(78,96,124),width=8)
+        d.rectangle((120,175,490,625),fill=(125,166,201))
+        d.ellipse((245,255,385,395),fill=(250,190,88))
+        d.polygon([(60,125),(195,140),(178,675),(75,720)],fill=(67,48,75))
+        d.polygon([(555,140),(690,125),(665,720),(570,675)],fill=(67,48,75))
+        # wall art
+        d.rounded_rectangle((720,190,875,345),16,fill=(42,55,78),outline=(98,116,143),width=5)
+        d.rounded_rectangle((755,225,840,310),12,fill=(29,40,59),outline=(135,150,170),width=3)
+        d.ellipse((780,248,815,283),fill=(246,190,90))
+        # bed and pillows
+        d.rounded_rectangle((90,735,990,1180),38,fill=(47,43,55),outline=(91,82,99),width=8)
+        d.rounded_rectangle((120,900,960,1215),34,fill=(199,199,204),outline=(130,130,140),width=6)
+        d.rounded_rectangle((165,925,410,1060),25,fill=(238,235,229),outline=(180,178,176),width=5)
+        d.rounded_rectangle((420,925,665,1060),25,fill=(228,226,223),outline=(180,178,176),width=5)
+        d.rounded_rectangle((245,1010,930,1225),28,fill=(99,77,111))
+        # nightstand and lamp
+        d.rounded_rectangle((720,570,930,860),18,fill=(96,66,57),outline=(132,94,74),width=7)
+        d.rectangle((748,850,778,1010),fill=(72,48,43))
+        d.rectangle((872,850,902,1010),fill=(72,48,43))
+        d.rectangle((805,465,832,575),fill=(61,48,48))
+        d.polygon([(745,465),(895,465),(855,370),(785,370)],fill=(238,193,107),outline=(130,96,58))
+        d.rounded_rectangle((770,675,885,745),12,fill=(22,27,34),outline=(245,196,72),width=5)
+        d.text((795,690),"07:00",fill=(245,196,72))
+        # phone on bed
+        d.rounded_rectangle((470,1170,590,1235),14,fill=(28,32,40),outline=(150,160,180),width=4)
+        # floor and a real rug, not a giant empty panel
+        for y in range(1215,H):
+            shade=int(104 + 12*(y-1215)/(H-1215))
+            d.line((0,y,W,y),fill=(shade,72,62))
+        d.rounded_rectangle((250,1450,830,1730),65,fill=(126,83,91),outline=(163,112,116),width=7)
+        d.ellipse((335,1510,745,1665),outline=(163,112,116),width=4)
+        # small floor objects
+        d.ellipse((130,1660,200,1695),fill=(42,44,54))
+        d.ellipse((880,1660,950,1695),fill=(42,44,54))
+        # plant
+        d.rectangle((975,760,1025,900),fill=(133,91,66))
+        d.ellipse((940,650,1010,790),fill=(58,116,78))
+        d.ellipse((985,600,1045,760),fill=(52,104,72))
     else:
         for y in range(H):
             t = y / H
