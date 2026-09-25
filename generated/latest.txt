@@ -1,11 +1,15 @@
-ALARM: Wake up.
+ALARM: Wake up. It is seven.
 
 ME: Five more minutes.
 
-ALARM: You said that five minutes ago.
+ALARM: You said five minutes five minutes ago.
 
-ME: I am consistent.
+ME: I am negotiating.
 
-ALARM: You also said it yesterday.
+ALARM: Yesterday you negotiated for forty minutes.
 
 ME: Please stop keeping records.
+
+ALARM: I have backups.
+
+ME: ...I am getting up.
