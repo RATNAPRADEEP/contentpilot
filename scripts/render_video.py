@@ -291,19 +291,17 @@ for i,text_line in enumerate(scripts):
         )
 
     # Clean short-form presentation: no dialogue panel.
-    # Characters and environment stay visually dominant; dialogue is shown as
-    # compact bottom subtitles with a subtle translucent background for readability.
-        # Recurring character names are part of the visual identity.
+    # Full-body recurring anime characters remain the only people on screen.
+    # Their alternating poses plus continuous body motion create simple acting.
     name_labels = (
         f"drawbox=x=75:y=500:w=230:h=58:color=000000@0.50:t=fill,"
         f"drawtext=fontfile={font}:text='ARJUN':fontcolor=white:fontsize=24:x=92:y=515,"
         f"drawbox=x=775:y=500:w=230:h=58:color=000000@0.50:t=fill,"
-        f"drawtext=fontfile={font}:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515,"
+        f"drawtext=fontfile={font}:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515"
     )
 
-subtitle_style = (
+    subtitle_style = (
         f"drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
-        f""
         f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
         f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.28:fontsize=14:x=95:y=1845"
     )
