@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-09-25T14:01:33.987801+00:00",
+  "source": {
+    "title": "Show HN: Agentic CUDA Kernel Optimizer",
+    "link": "https://github.com/bertaye/agentic-cuda-optimizer",
+    "description": "Hello; I was working on optimizing some CUDA kernels and I thought may be it is a good oppurtunity learn langgraph as well. I created a simple C++ CUDA Test Harness and handed that to AI agents. They can run kernels, get benchmarks, and even can profile via nsight \n \n Comments URL:  https://news.ycombinator.com/item?id=49842596  \n Points: 23 \n # Comments: 2"
+  },
+  "score": 3,
+  "hook": "Here is something interesting: Show HN: Agentic CUDA Kernel Optimizer.",
+  "script": [
+    "Here is something interesting: Show HN: Agentic CUDA Kernel Optimizer.",
+    "This story explores Show HN: Agentic CUDA Kernel Optimizer. The key idea is to understand what changed, why it matters, and what someone can do with it.",
+    "The useful part is not just the headline. Look at the underlying problem, the workflow, and what can be reused.",
+    "If this is useful, save it and follow for the next practical discovery."
+  ],
+  "format": {
+    "name": "ContentPilot Lab",
+    "language": "en",
+    "format": "short",
+    "duration_seconds": 45,
+    "aspect_ratio": "9:16"
+  }
+}

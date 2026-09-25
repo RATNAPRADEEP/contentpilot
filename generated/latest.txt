@@ -1,0 +1,7 @@
+Here is something interesting: Show HN: Agentic CUDA Kernel Optimizer.
+
+This story explores Show HN: Agentic CUDA Kernel Optimizer. The key idea is to understand what changed, why it matters, and what someone can do with it.
+
+The useful part is not just the headline. Look at the underlying problem, the workflow, and what can be reused.
+
+If this is useful, save it and follow for the next practical discovery.
