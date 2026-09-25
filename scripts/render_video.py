@@ -414,17 +414,9 @@ for i,text_line in enumerate(scripts):
         h0, h1 = human, human_shock
         r0, r1 = robot_talk, robot_talk_b
 
-    name_labels = (
-        "drawbox=x=82:y=535:w=150:h=42:color=0b1220@0.78:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ARJUN':fontcolor=white:fontsize=19:x=96:y=545,"
-        "drawbox=x=848:y=535:w=150:h=42:color=082f49@0.78:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='BYTE':fontcolor=67e8f9:fontsize=19:x=874:y=545"
-    )
-    subtitle_style = (
-        "drawbox=x=90:y=1650:w=900:h=155:color=000000@0.68:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile='"+scene_txt+"':fontcolor=white:fontsize=36:line_spacing=8:x=115:y=1680"
-    )
-
+    # Visual-only render: keep exactly the illustrated background and the two
+    # original full-body characters. No title, name labels, subtitles, music,
+    # sound effects, voice-over, watermarks, or dialogue panels.
     fc=(
         "[0:v]scale=1080:1920[m];"
         "[1:v]scale=350:705[h0s];"
@@ -434,22 +426,14 @@ for i,text_line in enumerate(scripts):
         "[m][h0s]overlay=x='35+10*sin(t*2)':y='550+5*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
         "[c1][h1s]overlay=x='25+12*sin(t*2)':y='535+5*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
         "[c2][r0s]overlay=x='690+7*sin(t*2+1)':y='550+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
-        "[c3][r1s]overlay=x='675+9*sin(t*2+1)':y='535+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
-        "[c4]"+name_labels+","+subtitle_style+","
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ALARM CLOCK NEGOTIATION':fontcolor=white@0.78:fontsize=25:x=70:y=55[v];"
-        "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
-        "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
-        "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
-        "[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
-        "alimiter=limit=0.92[a]"
+        "[c3][r1s]overlay=x='675+9*sin(t*2+1)':y='535+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[v]"
     )
 
     cmd=[
         "ffmpeg","-y",
-        "-loop","1","-i",background,"-i",h0,"-i",r0,"-i",h1,"-i",r1,"-i",voice,"-i",music,"-i",sfx,
-        "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
-        "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
-        "-c:a","aac","-b:a","128k",seg
+        "-loop","1","-i",background,"-i",h0,"-i",r0,"-i",h1,"-i",r1,
+        "-filter_complex",fc,"-map","[v]","-t",f"{dur:.2f}",
+        "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",seg
     ]
     run(cmd)
     segments.append(seg)
