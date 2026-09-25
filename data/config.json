@@ -1,0 +1,19 @@
+{
+  "channel": {
+    "name": "ContentPilot Lab",
+    "language": "en",
+    "format": "short",
+    "duration_seconds": 45,
+    "aspect_ratio": "9:16"
+  },
+  "topics": [
+    "AI tools",
+    "developer tools",
+    "automation",
+    "interesting open-source projects"
+  ],
+  "feeds": [
+    "https://hnrss.org/frontpage",
+    "https://www.reddit.com/r/artificial/.rss"
+  ]
+}
