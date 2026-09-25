@@ -30,6 +30,10 @@ The system will automatically:
 
 You should not need to edit source code for normal topic changes.
 
+## Build status
+
+The repository now contains the first end-to-end implementation. Validation is in progress before the first real YouTube-video generation.
+
 ## Repository
 
 https://github.com/RATNAPRADEEP/contentpilot
