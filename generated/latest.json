@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T18:04:56.585752+00:00",
+  "generated_at": "2026-09-25T18:14:46.388516+00:00",
   "source": {
     "title": "The Alarm Clock Negotiation",
     "full_title": "The Alarm Clock Negotiation",
@@ -19,6 +19,48 @@
     "ME: Please stop keeping records.",
     "ALARM: I have backups.",
     "ME: ...I am getting up."
+  ],
+  "scene_plan": [
+    {
+      "actor": "byte",
+      "action": "alarm_ringing",
+      "focus": "alarm"
+    },
+    {
+      "actor": "arjun",
+      "action": "sleepy",
+      "focus": "bed"
+    },
+    {
+      "actor": "byte",
+      "action": "keeping_record",
+      "focus": "record_book"
+    },
+    {
+      "actor": "arjun",
+      "action": "negotiating",
+      "focus": "bed"
+    },
+    {
+      "actor": "byte",
+      "action": "showing_record",
+      "focus": "record_book"
+    },
+    {
+      "actor": "arjun",
+      "action": "pleading",
+      "focus": "bed"
+    },
+    {
+      "actor": "byte",
+      "action": "showing_backup",
+      "focus": "backup_files"
+    },
+    {
+      "actor": "arjun",
+      "action": "getting_up",
+      "focus": "bed"
+    }
   ],
   "format": {
     "name": "ContentPilot Comedy",
