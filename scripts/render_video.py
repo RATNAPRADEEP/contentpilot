@@ -167,8 +167,6 @@ def make_character(path, kind, mood, step=0):
     line([(175,610),(345,610)], (255,255,255,35), 3)
     line([(205,700),(190,930)], (255,255,255,28), 3)
     line([(315,700),(330,930)], (255,255,255,28), 3)
-    if is_robot:
-
     # Small breathing/bounce anchor detail
     d.ellipse((247,655,273,681), fill=(255,255,255,35))
 
