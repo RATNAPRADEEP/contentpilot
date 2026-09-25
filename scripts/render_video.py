@@ -91,6 +91,8 @@ def make_character(path, kind, mood):
         d.line((258,330,250,380,270,382), fill=skin2, width=5)
         if mood=="shocked":
             d.ellipse((242,400,278,445), fill=(115,45,55,255), outline=ink, width=4)
+        elif mood=="talk":
+            d.ellipse((238,398,282,438), fill=(95,38,48,255), outline=ink, width=3)
         elif mood=="happy":
             d.arc((225,390,295,450), 10, 170, fill=(120,42,55,255), width=8)
         else:
@@ -127,6 +129,8 @@ def make_character(path, kind, mood):
         d.line((257,330,250,380,270,382), fill=skin2, width=5)
         if mood=="shocked":
             d.ellipse((240,398,280,448), fill=(5,38,54,255), outline=ink, width=4)
+        elif mood=="talk":
+            d.ellipse((237,397,283,441), fill=(4,42,58,255), outline=ink, width=3)
         elif mood=="happy":
             d.arc((225,390,295,450), 10, 170, fill=(5,55,70,255), width=8)
         else:
@@ -144,10 +148,14 @@ human=os.path.join(build,"character-human.png")
 human_shock=os.path.join(build,"character-human-shock.png")
 robot=os.path.join(build,"character-ai.png")
 robot_happy=os.path.join(build,"character-ai-happy.png")
+human_talk=os.path.join(build,"character-human-talk.png")
+robot_talk=os.path.join(build,"character-ai-talk.png")
 make_character(human,"human","neutral")
 make_character(human_shock,"human","shocked")
+make_character(human_talk,"human","talk")
 make_character(robot,"robot","neutral")
 make_character(robot_happy,"robot","happy")
+make_character(robot_talk,"robot","talk")
 
 # ---------- Procedural comedy audio ----------
 def music_wav(path, seconds, style):
@@ -193,6 +201,11 @@ def sfx_wav(path, seconds, scene):
 
 styles=["playful","curious","tension","chaos","punchline","playful"]
 segments=[]
+background_url = data.get("background_urls", [""])[0] if data.get("background_urls") else ""
+background = os.path.join(build, "real-world-background.mp4")
+if background_url:
+    run(["curl", "-L", "--fail", "--retry", "3", "-o", background, background_url])
+    print("Using real-world background:", background_url)
 
 for i,text_line in enumerate(scripts):
     # One voice file per scene prevents dialogue from being cut at estimated boundaries.
@@ -210,8 +223,8 @@ for i,text_line in enumerate(scripts):
     sfx_wav(sfx,dur,i)
 
     seg=os.path.join(build,f"segment_{i}.mp4")
-    h=human_shock if i in (2,4,5) else human
-    r=robot_happy if i in (1,3,5) else robot
+    h=human_shock if i in (2,4,5) else human_talk
+    r=robot_happy if i in (1,3,5) else robot_talk
 
     # Designed animated comic environment instead of unrelated stock footage.
     # Each scene gets a different visual motif, while the characters stay consistent.
@@ -257,12 +270,12 @@ for i,text_line in enumerate(scripts):
     )
 
     fc=(
-        f"color=c={bg}:s=1080x1920:r=30[base];"
+        f"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=1.0:1[base];"
         f"[base]{motif}[m];"
         f"[1:v]scale=270:375[h];"
         f"[2:v]scale=270:375[r];"
-        f"[m][h]overlay=x=60:y=730:enable='between(t,0,{dur:.2f})'[c1];"
-        f"[c1][r]overlay=x=600:y=680:enable='between(t,0,{dur:.2f})'[c2];"
+        f"[m][h]overlay=x='55+8*sin(t*3)':y='710+6*sin(t*6)':enable='between(t,0,{dur:.2f})'[c1];"
+        f"[c1][r]overlay=x='595+8*sin(t*3+1)':y='660+6*sin(t*6+1)':enable='between(t,0,{dur:.2f})'[c2];"
         f"[c2]{subtitle_style}[v];"
         f"[3:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
         f"[4:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
@@ -273,7 +286,7 @@ for i,text_line in enumerate(scripts):
 
 
     cmd=[
-        "ffmpeg","-y","-f","lavfi","-i","color=c=0b1020:s=1080x1920:r=30",
+        "ffmpeg","-y","-stream_loop","-1","-i",background,
         "-i",h,"-i",r,"-i",voice,"-i",music,"-i",sfx,
         "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
         "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
