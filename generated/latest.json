@@ -1,23 +1,22 @@
 {
-  "generated_at": "2026-09-25T16:58:09.737739+00:00",
+  "generated_at": "2026-09-25T17:26:58.162972+00:00",
   "source": {
-    "title": "The Group Chat Before an Exam",
-    "full_title": "The Group Chat Before an Exam",
+    "title": "The Alarm Clock Negotiation",
+    "full_title": "The Alarm Clock Negotiation",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: student life.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: morning routines.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "The group chat becomes extremely active exactly when studying becomes urgent.",
+  "hook": "My alarm clock and I have completely different ideas about when tomorrow begins.",
   "script": [
-    "STUDENT: Guys, exam tomorrow. We should study.",
-    "CHAT: Sticker.",
-    "STUDENT: Seriously.",
-    "CHAT: Another sticker.",
-    "STUDENT: Has anyone finished the syllabus?",
-    "CHAT: Seen by 17 people.",
-    "STUDENT: Excellent. We are all equally prepared."
+    "ALARM: Wake up.",
+    "ME: Five more minutes.",
+    "ALARM: You said that five minutes ago.",
+    "ME: I am consistent.",
+    "ALARM: You also said it yesterday.",
+    "ME: Please stop keeping records."
   ],
   "format": {
     "name": "ContentPilot Comedy",
@@ -29,14 +28,14 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "STUDENT",
-    "CHAT",
-    "EXAM"
+    "ALARM",
+    "ME",
+    "MORNING"
   ],
   "characters": {
     "primary": [
       "arjun",
-      "maya"
+      "byte"
     ],
     "available": [
       "arjun",
@@ -61,11 +60,9 @@
       }
     }
   },
-  "background_urls": [
-    "https://assets.mixkit.co/videos/4788/4788-720.mp4"
-  ],
+  "background_urls": [],
   "genre": "comedy",
-  "theme": "student life",
+  "theme": "morning routines",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",

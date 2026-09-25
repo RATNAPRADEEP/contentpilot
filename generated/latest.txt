@@ -1,13 +1,11 @@
-STUDENT: Guys, exam tomorrow. We should study.
+ALARM: Wake up.
 
-CHAT: Sticker.
+ME: Five more minutes.
 
-STUDENT: Seriously.
+ALARM: You said that five minutes ago.
 
-CHAT: Another sticker.
+ME: I am consistent.
 
-STUDENT: Has anyone finished the syllabus?
+ALARM: You also said it yesterday.
 
-CHAT: Seen by 17 people.
-
-STUDENT: Excellent. We are all equally prepared.
+ME: Please stop keeping records.
