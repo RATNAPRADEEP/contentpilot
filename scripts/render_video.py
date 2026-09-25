@@ -46,6 +46,7 @@ def duration(path):
 # Original procedural character designs. They are not based on an existing
 # anime, film, game, manga, celebrity, or other copyrighted character.
 def make_character(path, kind, mood, step=0):
+    """Create original anime-inspired full-body characters with human-like proportions."""
     W, H = 520, 1050
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im, "RGBA")
@@ -55,120 +56,123 @@ def make_character(path, kind, mood, step=0):
         if outline:
             d.line(points + [points[0]], fill=outline, width=width, joint="curve")
 
-    def glow(cx, cy, r, color):
-        layer = Image.new("RGBA", (W, H), (0,0,0,0))
-        ld = ImageDraw.Draw(layer, "RGBA")
-        for rr in range(r, 0, -10):
-            alpha = int(color[3] * (1 - rr/r) * 0.18)
-            ld.ellipse((cx-rr, cy-rr, cx+rr, cy+rr), fill=(*color[:3], max(0,alpha)))
-        im.alpha_composite(layer.filter(ImageFilter.GaussianBlur(14)))
+    def line(points, fill, width):
+        d.line(points, fill=fill, width=width, joint="curve")
 
-    if kind in ("human", "maya"):
-        skin=(241,178,137,255); skin2=(211,137,105,255)
-        hair=(38,25,38,255); hair_hi=(67,42,69,255)
-        jacket=(44,62,92,255); shirt=(238,241,245,255)
-        ink=(24,24,34,255); white=(255,255,255,255)
-        if kind == "maya":
-            hair=(72,35,74,255); hair_hi=(120,65,122,255)
-            jacket=(86,54,88,255); shirt=(250,236,245,255)
-
-        poly([(85,760),(108,565),(178,515),(342,515),(412,565),(450,760)], jacket, ink, 5)
-        poly([(178,525),(260,620),(342,525),(315,760),(205,760)], shirt, (70,78,92,255), 3)
-        d.rounded_rectangle((214,455,306,555), 28, fill=skin, outline=skin2, width=4)
-        d.ellipse((132,270,190,365), fill=skin, outline=skin2, width=4)
-        d.ellipse((330,270,388,365), fill=skin, outline=skin2, width=4)
-        d.ellipse((150,125,370,490), fill=skin, outline=ink, width=5)
-        poly([(145,250),(125,190),(153,170),(132,122),(190,138),(181,78),
-              (232,105),(260,52),(281,105),(336,70),(327,132),(382,112),
-              (360,188),(372,255),(335,220),(310,155),(267,178),(226,148),
-              (190,205)], hair, ink, 5)
-        poly([(166,169),(188,105),(215,135),(260,82),(288,126),(335,102),(317,160),
-              (275,142),(238,165),(201,145)], hair_hi)
-        d.arc((183,255,236,292), 190, 350, fill=ink, width=8)
-        d.arc((282,255,335,292), 190, 350, fill=ink, width=8)
-        for box, iris in [((180,275,241,345),(58,112,176,255)),((279,275,340,345),(58,112,176,255))]:
-            d.ellipse(box, fill=white, outline=ink, width=5)
-            x=(box[0]+box[2])//2; y=(box[1]+box[3])//2+4
-            d.ellipse((x-18,y-22,x+18,y+25), fill=iris, outline=ink, width=3)
-            d.ellipse((x-7,y-18,x+7,y+18), fill=(20,28,55,255))
-            d.ellipse((x-10,y-15,x-2,y-7), fill=white)
-        d.line((258,330,250,380,270,382), fill=skin2, width=5)
-        if mood=="shocked":
-            d.ellipse((242,400,278,445), fill=(115,45,55,255), outline=ink, width=4)
-        elif mood=="talk":
-            d.ellipse((238,398,282,438), fill=(95,38,48,255), outline=ink, width=3)
-        elif mood=="happy":
-            d.arc((225,390,295,450), 10, 170, fill=(120,42,55,255), width=8)
-        else:
-            d.arc((230,395,290,435), 15, 165, fill=(120,42,55,255), width=6)
-        if step == 0:
-            d.line((112,590,52,675), fill=jacket, width=45)
-            d.line((405,590,472,655), fill=jacket, width=45)
-            d.ellipse((25,652,82,708), fill=skin, outline=skin2, width=4)
-            d.ellipse((445,633,502,689), fill=skin, outline=skin2, width=4)
-            left_leg=(205,755,175,1000); right_leg=(315,755,350,1000)
-        else:
-            d.line((112,590,68,645), fill=jacket, width=45)
-            d.line((405,590,448,675), fill=jacket, width=45)
-            d.ellipse((40,620,95,675), fill=skin, outline=skin2, width=4)
-            d.ellipse((420,652,478,708), fill=skin, outline=skin2, width=4)
-            left_leg=(205,755,235,1000); right_leg=(315,755,285,1000)
-        d.line([left_leg[:2], left_leg[2:]], fill=jacket, width=58)
-        d.line([right_leg[:2], right_leg[2:]], fill=jacket, width=58)
-        d.ellipse((145 if step==0 else 205,980,215 if step==0 else 270,1030), fill=(28,30,42,255))
-        d.ellipse((325 if step==0 else 260,980,395 if step==0 else 330,1030), fill=(28,30,42,255))
-
+    is_robot = kind == "robot"
+    if is_robot:
+        skin, skin2 = (170,225,239,255), (65,160,190,255)
+        hair, hair2 = (18,66,101,255), (43,137,174,255)
+        top, top2 = (20,122,153,255), (42,184,198,255)
+        shoe = (7,34,48,255)
+        iris = (48,225,238,255)
+        glow_col = (35,210,235,150)
     else:
-        skin=(174,228,242,255); skin2=(72,174,204,255)
-        hair=(22,74,110,255); hair_hi=(50,154,190,255)
-        suit=(19,126,157,255); suit2=(33,190,205,255)
-        ink=(8,28,42,255); white=(239,255,255,255)
-        glow(260,330,230,(32,205,235,150))
-        poly([(88,760),(115,570),(188,510),(332,510),(405,570),(438,760)], suit, ink, 5)
-        poly([(190,520),(260,610),(330,520),(310,760),(210,760)], suit2, (95,236,240,255), 3)
-        d.rounded_rectangle((215,455,305,550), 28, fill=skin, outline=skin2, width=4)
-        d.ellipse((142,112,378,490), fill=skin, outline=ink, width=5)
-        poly([(138,245),(124,178),(155,152),(136,103),(193,124),(182,62),
-              (232,96),(265,42),(286,102),(343,62),(330,127),(391,105),
-              (366,180),(380,252),(338,218),(310,145),(270,175),(226,142),
-              (188,202)], hair, ink, 5)
-        poly([(158,165),(190,91),(218,124),(262,78),(291,121),(342,92),(320,150),
-              (278,136),(236,159),(198,139)], hair_hi)
-        d.line((190,190,225,175,248,193), fill=(142,248,255,210), width=4)
-        d.line((296,190,320,175), fill=(142,248,255,210), width=4)
-        for box in [(175,270,242,347),(278,270,345,347)]:
-            d.ellipse(box, fill=(8,45,62,255), outline=ink, width=5)
-            x=(box[0]+box[2])//2; y=(box[1]+box[3])//2
-            d.ellipse((x-17,y-23,x+17,y+23), fill=(64,235,245,255))
-            d.ellipse((x-6,y-20,x+7,y+20), fill=(3,34,52,255))
-            d.ellipse((x-10,y-16,x-2,y-8), fill=white)
-        d.line((257,330,250,380,270,382), fill=skin2, width=5)
-        if mood=="shocked":
-            d.ellipse((240,398,280,448), fill=(5,38,54,255), outline=ink, width=4)
-        elif mood=="talk":
-            d.ellipse((237,397,283,441), fill=(4,42,58,255), outline=ink, width=3)
-        elif mood=="happy":
-            d.arc((225,390,295,450), 10, 170, fill=(5,55,70,255), width=8)
-        else:
-            d.arc((230,395,290,435), 15, 165, fill=(5,55,70,255), width=6)
-        if step == 0:
-            d.line((112,590,45,675), fill=suit2, width=45)
-            d.line((405,590,475,650), fill=suit2, width=45)
-            d.ellipse((20,650,80,710), fill=skin, outline=skin2, width=4)
-            d.ellipse((445,628,505,688), fill=skin, outline=skin2, width=4)
-            left_leg=(210,755,180,1000); right_leg=(310,755,345,1000)
-        else:
-            d.line((112,590,70,645), fill=suit2, width=45)
-            d.line((405,590,450,675), fill=suit2, width=45)
-            d.ellipse((42,620,98,675), fill=skin, outline=skin2, width=4)
-            d.ellipse((420,652,480,708), fill=skin, outline=skin2, width=4)
-            left_leg=(210,755,235,1000); right_leg=(310,755,285,1000)
-        d.line([left_leg[:2], left_leg[2:]], fill=suit2, width=58)
-        d.line([right_leg[:2], right_leg[2:]], fill=suit2, width=58)
-        d.ellipse((150 if step==0 else 205,980,220 if step==0 else 270,1030), fill=(5,38,54,255))
-        d.ellipse((320 if step==0 else 260,980,390 if step==0 else 330,1030), fill=(5,38,54,255))
-        for y in range(180,735,42):
-            d.line((120,y,400,y), fill=(190,255,255,32), width=2)
+        skin, skin2 = (239,174,133,255), (198,119,91,255)
+        hair, hair2 = (39,27,42,255), (74,45,74,255)
+        top, top2 = (43,60,90,255), (238,241,245,255)
+        shoe = (27,29,40,255)
+        iris = (62,112,180,255)
+
+    ink = (22,25,34,255)
+    white = (255,255,255,255)
+
+    # soft character glow for Byte only
+    if is_robot:
+        glow_layer = Image.new("RGBA",(W,H),(0,0,0,0))
+        gd = ImageDraw.Draw(glow_layer,"RGBA")
+        gd.ellipse((125,90,395,430), fill=glow_col)
+        im.alpha_composite(glow_layer.filter(ImageFilter.GaussianBlur(28)))
+
+    # Hair behind head
+    d.ellipse((155,105,365,390), fill=hair, outline=ink, width=5)
+    poly([(150,245),(135,190),(165,160),(145,112),(198,132),(190,75),
+          (235,108),(260,48),(286,108),(337,76),(328,133),(380,112),
+          (362,190),(370,255),(335,215),(310,158),(268,180),(225,150),
+          (185,215)], hair, ink, 5)
+    poly([(170,165),(194,110),(220,138),(260,92),(291,130),(335,105),
+          (318,160),(275,145),(237,168),(200,148)], hair2)
+
+    # Neck and shoulders
+    d.rounded_rectangle((226,335,294,430), 18, fill=skin, outline=skin2, width=4)
+    poly([(145,405),(205,370),(315,370),(375,405),(400,610),
+          (340,665),(180,665),(120,610)], top, ink, 5)
+
+    # Collar / shirt detail
+    if is_robot:
+        poly([(202,382),(260,438),(318,382),(305,555),(215,555)], top2, (80,230,235,255), 3)
+        line([(260,438),(260,560)], (170,255,255,150), 4)
+    else:
+        poly([(205,382),(260,440),(315,382),(298,550),(222,550)], top2, (95,100,120,255), 3)
+        poly([(242,425),(260,445),(278,425),(270,485),(250,485)], (35,39,55,255))
+
+    # Face over hair
+    d.ellipse((158,125,362,365), fill=skin, outline=ink, width=5)
+    # ears
+    d.ellipse((142,220,175,285), fill=skin, outline=skin2, width=3)
+    d.ellipse((345,220,378,285), fill=skin, outline=skin2, width=3)
+
+    # Anime eyes, smaller and more natural
+    for cx in (205,315):
+        d.ellipse((cx-27,235,cx+27,300), fill=white, outline=ink, width=4)
+        d.ellipse((cx-12,245,cx+12,294), fill=iris, outline=ink, width=2)
+        d.ellipse((cx-5,250,cx+6,291), fill=(15,27,45,255))
+        d.ellipse((cx-9,250,cx-2,258), fill=white)
+    line([(181,218),(222,210)], ink, 5)
+    line([(298,210),(339,218)], ink, 5)
+    line([(258,285),(251,320),(270,322)], skin2, 4)
+
+    if mood == "shocked":
+        d.ellipse((242,338,278,382), fill=(92,38,48,255), outline=ink, width=4)
+        line([(180,205),(216,195)], ink, 4)
+        line([(304,195),(340,205)], ink, 4)
+    elif mood == "talk":
+        d.ellipse((240,338,280,378), fill=(94,39,50,255), outline=ink, width=3)
+    elif mood == "happy":
+        d.arc((225,326,295,388), 10, 170, fill=(110,40,52,255), width=7)
+    else:
+        d.arc((230,332,290,370), 15, 165, fill=(110,40,52,255), width=5)
+
+    # Waist and hips: explicit torso taper so the body is not a triangle.
+    d.rounded_rectangle((185,570,335,700), 35, fill=top, outline=ink, width=4)
+    d.rounded_rectangle((168,650,352,745), 30, fill=top, outline=ink, width=5)
+    if is_robot:
+        d.rounded_rectangle((205,585,315,655), 20, fill=(25,154,177,255), outline=(90,235,240,255), width=3)
+
+    # Arms, with slight pose difference for natural movement.
+    if step == 0:
+        left_arm = [(135,420),(92,535),(78,610)]
+        right_arm = [(385,420),(430,520),(445,590)]
+    else:
+        left_arm = [(135,420),(105,500),(125,575)]
+        right_arm = [(385,420),(420,545),(400,625)]
+    line(left_arm, top, 42)
+    line(right_arm, top, 42)
+    d.ellipse((left_arm[-1][0]-22,left_arm[-1][1]-22,left_arm[-1][0]+22,left_arm[-1][1]+22), fill=skin, outline=skin2, width=3)
+    d.ellipse((right_arm[-1][0]-22,right_arm[-1][1]-22,right_arm[-1][0]+22,right_arm[-1][1]+22), fill=skin, outline=skin2, width=3)
+
+    # Legs separated at the hips with visible waist/upper legs.
+    if step == 0:
+        left_leg = (215,725,195,975)
+        right_leg = (305,725,325,975)
+    else:
+        left_leg = (215,725,235,975)
+        right_leg = (305,725,285,975)
+    line([left_leg[:2],left_leg[2:]], top, 58)
+    line([right_leg[:2],right_leg[2:]], top, 58)
+    d.ellipse((165 if step==0 else 205,950,235 if step==0 else 275,1010), fill=shoe, outline=ink, width=4)
+    d.ellipse((305 if step==0 else 265,950,375 if step==0 else 335,1010), fill=shoe, outline=ink, width=4)
+
+    # Clothing seams and highlights
+    line([(175,610),(345,610)], (255,255,255,35), 3)
+    line([(205,700),(190,930)], (255,255,255,28), 3)
+    line([(315,700),(330,930)], (255,255,255,28), 3)
+    if is_robot:
+        for y in range(165,330,34):
+            line([(145,y),(375,y)], (190,255,255,25), 2)
+
+    # Small breathing/bounce anchor detail
+    d.ellipse((247,655,273,681), fill=(255,255,255,35))
 
     im.save(path, "PNG")
 
@@ -414,26 +418,39 @@ for i,text_line in enumerate(scripts):
         h0, h1 = human, human_shock
         r0, r1 = robot_talk, robot_talk_b
 
-    # Visual-only render: keep exactly the illustrated background and the two
-    # original full-body characters. No title, name labels, subtitles, music,
-    # sound effects, voice-over, watermarks, or dialogue panels.
+    # Full comedy render: original characters + illustrated environment + voice,
+    # music, SFX and readable subtitles. No stock footage or copyrighted characters.
+    subtitle_style = (
+        "drawbox=x=85:y=1605:w=910:h=190:color=000000@0.62:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
+        "textfile='"+scene_txt+"':fontcolor=white:fontsize=38:line_spacing=10:x=115:y=1640"
+    )
+
     fc=(
         "[0:v]scale=1080:1920[m];"
-        "[1:v]scale=350:705[h0s];"
-        "[2:v]scale=350:705[r0s];"
-        "[3:v]scale=370:745[h1s];"
-        "[4:v]scale=370:745[r1s];"
-        "[m][h0s]overlay=x='35+10*sin(t*2)':y='550+5*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
-        "[c1][h1s]overlay=x='25+12*sin(t*2)':y='535+5*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
-        "[c2][r0s]overlay=x='690+7*sin(t*2+1)':y='550+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
-        "[c3][r1s]overlay=x='675+9*sin(t*2+1)':y='535+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[v]"
+        "[1:v]scale=360:730[h0s];"
+        "[2:v]scale=360:730[r0s];"
+        "[3:v]scale=380:770[h1s];"
+        "[4:v]scale=380:770[r1s];"
+        "[m][h0s]overlay=x='20+12*sin(t*1.7)':y='560+5*sin(t*4)':enable='lt(mod(t,0.75),0.38)'[c1];"
+        "[c1][h1s]overlay=x='15+14*sin(t*1.7)':y='545+5*sin(t*4)':enable='gte(mod(t,0.75),0.38)'[c2];"
+        "[c2][r0s]overlay=x='700+8*sin(t*1.6+1)':y='560+4*sin(t*4+1)':enable='lt(mod(t,0.75),0.38)'[c3];"
+        "[c3][r1s]overlay=x='685+10*sin(t*1.6+1)':y='545+4*sin(t*4+1)':enable='gte(mod(t,0.75),0.38)'[c4];"
+        "[c4]"+subtitle_style+"[v];"
+        "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
+        "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
+        "[7:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
+        "[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.14 0.30':normalize=0,"
+        "alimiter=limit=0.92[a]"
     )
 
     cmd=[
         "ffmpeg","-y",
         "-loop","1","-i",background,"-i",h0,"-i",r0,"-i",h1,"-i",r1,
-        "-filter_complex",fc,"-map","[v]","-t",f"{dur:.2f}",
-        "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",seg
+        "-i",voice,"-i",music,"-i",sfx,
+        "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
+        "-r","30","-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
+        "-c:a","aac","-b:a","128k",seg
     ]
     run(cmd)
     segments.append(seg)
