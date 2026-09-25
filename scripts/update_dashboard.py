@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json, os, html
+from urllib.parse import quote
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 data = json.load(open(os.path.join(ROOT, "generated/latest.json"), encoding="utf-8"))
@@ -8,41 +9,71 @@ os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
 title = html.escape(data["source"]["title"])
 summary = html.escape(data["script"][1])
 source = html.escape(data["source"].get("link", ""))
+domain = html.escape(data["source"].get("domain", "public source"))
 generated = html.escape(data["generated_at"])
+score = data["score"]
+candidates = data["candidates_considered"]
+story = data.get("story", {})
 
 page = f"""<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ContentPilot</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ContentPilot — Daily Content Intelligence</title>
 <style>
-body{{margin:0;background:#0b1020;color:#f8fafc;font-family:system-ui,sans-serif}}
-main{{max-width:960px;margin:auto;padding:32px 20px}}
-.card{{background:#151c31;border:1px solid #26314f;border-radius:20px;padding:24px;margin:18px 0}}
-h1{{font-size:42px;margin-bottom:8px}}
-.badge{{display:inline-block;padding:7px 11px;border-radius:999px;background:#1e293b;font-size:12px}}
-a{{color:#7dd3fc}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}}
-.step{{padding:16px;background:#0f172a;border-radius:14px}}
-.status{{padding:14px;border-radius:12px;background:#102a1b;border:1px solid #1f6b3b}}
+:root{{--bg:#070b16;--panel:#0d1425;--panel2:#111a2d;--line:#22304d;--text:#f8fafc;--muted:#91a0bb;--accent:#8b5cf6;--cyan:#22d3ee;--green:#34d399}}
+*{{box-sizing:border-box}} body{{margin:0;background:radial-gradient(circle at 15% 0%,#172554 0,#070b16 38%),#070b16;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,sans-serif}}
+main{{max-width:1180px;margin:auto;padding:34px 22px 60px}}
+.top{{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:28px}}
+.brand{{display:flex;gap:12px;align-items:center}} .logo{{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--cyan));box-shadow:0 10px 35px #22d3ee22}}
+h1{{font-size:27px;margin:0}} .muted{{color:var(--muted)}} .pill{{border:1px solid var(--line);background:#0c1324;padding:8px 12px;border-radius:999px;font-size:12px;color:#b7c3da}}
+.hero{{border:1px solid var(--line);background:linear-gradient(145deg,#101a31ee,#0a1020ee);border-radius:28px;padding:30px;box-shadow:0 25px 80px #0008}}
+.kicker{{font-size:12px;letter-spacing:.14em;color:#67e8f9;font-weight:800}} h2{{font-size:38px;line-height:1.08;margin:12px 0 18px;max-width:900px}}
+.grid{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}} .metric,.card{{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:18px}}
+.metric b{{display:block;font-size:25px;margin-top:6px}} .metric span{{font-size:12px;color:var(--muted)}}
+.pipeline{{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:22px}}
+.step{{padding:14px 12px;border:1px solid var(--line);border-radius:15px;background:var(--panel2);font-size:13px}}
+.step strong{{display:block;font-size:11px;color:var(--cyan);margin-bottom:7px}}
+.content{{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;margin-top:18px}}
+.story{{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}}
+.story div{{padding:16px;border-radius:16px;background:#0a1120;border:1px solid var(--line)}} .story b{{font-size:12px;color:#c4b5fd}}
+a{{color:#67e8f9;text-decoration:none}} a:hover{{text-decoration:underline}}
+.status{{display:flex;align-items:center;gap:9px;color:#a7f3d0;margin-top:20px}} .dot{{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 18px var(--green)}}
+@media(max-width:800px){{h2{{font-size:29px}}.grid,.pipeline,.content{{grid-template-columns:1fr 1fr}}.content{{display:block}}.pipeline{{margin-bottom:18px}}}}
 </style>
 </head>
 <body><main>
-<h1>ContentPilot</h1>
-<p class="badge">AUTOMATED CONTENT PIPELINE</p>
-<div class="card">
+<header class="top"><div class="brand"><div class="logo"></div><div><h1>ContentPilot</h1><div class="muted">Daily Content Intelligence</div></div></div><div class="pill">AUTOMATION ONLINE</div></header>
+
+<section class="hero">
+<div class="kicker">TODAY'S DISCOVERY · {domain.upper()}</div>
 <h2>{title}</h2>
-<p>{summary}</p>
-<p><small>Topic score: {data["score"]} · Candidates considered: {data["candidates_considered"]}</small></p>
-<div class="status">Latest build completed. The rendered video is retained as a short-lived GitHub Actions artifact and is not stored in the repository.</div>
-{"<p><a href='"+source+"' target='_blank' rel='noreferrer'>Open original source</a></p>" if source else ""}
+<p class="muted">{summary}</p>
+<div class="status"><span class="dot"></span> Build completed · visual story rendered · ready for review</div>
+<div class="grid">
+<div class="metric"><span>TOPIC SCORE</span><b>{score}</b></div>
+<div class="metric"><span>SOURCES SCANNED</span><b>{candidates}</b></div>
+<div class="metric"><span>FORMAT</span><b>9:16</b></div>
+<div class="metric"><span>STORY</span><b>5 scenes</b></div>
 </div>
-<div class="card"><h2>Pipeline</h2><div class="grid">
-<div class="step">1. Discover</div><div class="step">2. Score</div><div class="step">3. Research</div>
-<div class="step">4. Script</div><div class="step">5. Render</div><div class="step">6. Publish</div>
+<div class="pipeline">
+<div class="step"><strong>01</strong>Discover</div><div class="step"><strong>02</strong>Score</div><div class="step"><strong>03</strong>Research</div><div class="step"><strong>04</strong>Story</div><div class="step"><strong>05</strong>Render</div><div class="step"><strong>06</strong>Publish</div>
+</div>
+</section>
+
+<section class="content">
+<div class="card"><div class="kicker">STORY ENGINE</div><h3>Built for retention, not just narration</h3>
+<div class="story">
+<div><b>HOOK</b><br>{html.escape(story.get("hook","Curiosity hook"))}</div>
+<div><b>SIGNAL</b><br>{html.escape(story.get("signal","Source evidence"))}</div>
+<div><b>MECHANISM</b><br>{html.escape(story.get("mechanism","What is interesting"))}</div>
+<div><b>MEANING</b><br>{html.escape(story.get("meaning","Why it matters"))}</div>
 </div></div>
-<div class="card"><small>Generated {generated}</small></div>
+<div class="card"><div class="kicker">SOURCE</div><h3>{domain}</h3>
+<p class="muted">Public-source content is used as the research input. Verify the original source before relying on a claim.</p>
+{"<p><a href='"+source+"' target='_blank' rel='noreferrer'>Open original source →</a></p>" if source else ""}
+<p class="muted">Generated {generated}</p></div>
+</section>
 </main></body></html>"""
 
 open(os.path.join(ROOT, "docs", "index.html"), "w", encoding="utf-8").write(page)
