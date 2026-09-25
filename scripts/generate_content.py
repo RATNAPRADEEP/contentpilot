@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, os, random
+import json, os
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -7,112 +7,136 @@ CFG = json.load(open(os.path.join(ROOT, "data/config.json"), encoding="utf-8"))
 OUT = os.path.join(ROOT, "generated")
 os.makedirs(OUT, exist_ok=True)
 
+# Original fictional sketches built from ordinary real-world situations.
+# No real people, brands, copyrighted characters, song lyrics, clips, or source
+# dialogue are used. Real-world situations are only the starting point.
 SCENARIOS = [
     {
-        "title": "When Your AI Assistant Gets Promoted",
-        "theme": "AI assistant disasters",
-        "hook": "I asked my AI assistant to save me ten minutes.",
+        "title": "When the QR Payment Says 'Pending'",
+        "theme": "everyday digital payments",
+        "hook": "The payment said pending, so now everyone in the shop is emotionally invested.",
         "scenes": [
-            "ME: I asked my AI assistant to save me ten minutes.",
-            "AI: Done. I scheduled a ten-minute meeting to discuss how we can save ten minutes.",
-            "ME: That's not saving time.",
-            "AI: Correct. So I scheduled another meeting to improve the first meeting.",
-            "ME: Please stop.",
-            "AI: Absolutely. I have added a follow-up meeting called: Please Stop."
+            "CUSTOMER: I paid. The screen says pending.",
+            "CASHIER: Okay. We wait.",
+            "CUSTOMER: How long?",
+            "CASHIER: Usually a few seconds.",
+            "CUSTOMER: It has been two minutes.",
+            "CASHIER: Congratulations. We are now both refreshing the same screen."
         ],
-        "nodes": ["YOU", "AI", "MEETING"],
-        "background_urls": ["https://assets.mixkit.co/videos/28286/28286-720.mp4","https://assets.mixkit.co/videos/4872/4872-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/4607/4607-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
+        "nodes": ["CUSTOMER", "CASHIER", "PENDING"]
     },
     {
-        "title": "When the Bug Only Exists on Your Computer",
-        "theme": "developer life",
-        "hook": "Every developer knows the scariest sentence: It works on my machine.",
+        "title": "The Delivery Is Five Minutes Away",
+        "theme": "food delivery and waiting",
+        "hook": "The delivery tracker said five minutes, which apparently means a small emotional journey.",
         "scenes": [
-            "DEV: It works perfectly on my machine.",
-            "TEAMMATE: Great. Push it.",
-            "DEV: Okay.",
-            "CI: Failed.",
-            "DEV: Weird. It was working five seconds ago.",
-            "CI: Correct. I only become aware of bugs when you are confident."
+            "ME: The delivery is five minutes away.",
+            "FRIEND: Great. Sit down.",
+            "ME: I cannot. The tracker is moving.",
+            "FRIEND: It has been five minutes.",
+            "ME: Now it says four minutes.",
+            "FRIEND: So the food is getting closer and time is getting farther away."
         ],
-        "nodes": ["MY PC", "CI", "BUG"],
-        "background_urls": ["https://assets.mixkit.co/videos/52076/52076-720.mp4","https://assets.mixkit.co/videos/48503/48503-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
+        "nodes": ["TRACKER", "ME", "FOOD"]
     },
     {
-        "title": "The Meeting That Could Have Been an Email",
-        "theme": "office meetings",
-        "hook": "My calendar invited me to a meeting about whether we need meetings.",
+        "title": "The Apartment Lift Stops at Every Floor",
+        "theme": "apartment life",
+        "hook": "You enter the lift for one floor and suddenly become a tourist of the entire building.",
         "scenes": [
-            "MANAGER: Quick meeting, everyone. This will only take an hour.",
-            "ME: What is it about?",
-            "MANAGER: Whether our meetings are taking too much time.",
-            "ME: And how long is this meeting?",
-            "MANAGER: One hour.",
-            "ME: Perfect. We have solved the problem by becoming the problem."
+            "ME: I am going to the third floor.",
+            "LIFT: Door closing.",
+            "LIFT: Door opening.",
+            "ME: We stopped at the second floor.",
+            "NEIGHBOR: I need the fourth.",
+            "ME: At this rate, I will visit every floor before lunch."
         ],
-        "nodes": ["CALENDAR", "MEETING", "REGRET"],
-        "background_urls": ["https://assets.mixkit.co/videos/4547/4547-720.mp4","https://assets.mixkit.co/videos/4872/4872-720.mp4","https://assets.mixkit.co/videos/4607/4607-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/24055/24055-720.mp4"]
+        "nodes": ["LIFT", "ME", "NEIGHBOR"]
     },
     {
-        "title": "When Online Shopping Reads Your Mind",
-        "theme": "online shopping",
-        "hook": "I searched for one cheap thing online. The internet took that personally.",
+        "title": "When the Power Goes Out During Your Presentation",
+        "theme": "student and office life",
+        "hook": "Nothing improves public speaking like losing the screen halfway through your presentation.",
         "scenes": [
-            "ME: I only searched for a phone case.",
-            "APP: Here are twelve premium phone cases.",
-            "ME: I am not buying anything.",
-            "APP: Here is a laptop you looked at three months ago.",
-            "ME: How do you remember that?",
-            "APP: I forget your password, but I remember your shopping dreams."
+            "ME: Good morning. Today I will explain the whole project.",
+            "POWER: Off.",
+            "ME: Okay. New presentation. I will explain the project from memory.",
+            "FRIEND: You were reading the slides.",
+            "ME: I know. This is now an advanced version."
         ],
-        "nodes": ["SEARCH", "RECOMMEND", "WALLET"],
-        "background_urls": ["https://assets.mixkit.co/videos/4837/4837-720.mp4","https://assets.mixkit.co/videos/28286/28286-720.mp4","https://assets.mixkit.co/videos/4508/4508-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/231/231-720.mp4"]
+        "nodes": ["PRESENTATION", "POWER", "PANIC"]
     },
     {
-        "title": "My Gym Motivation Has a Software Update",
-        "theme": "gym motivation",
-        "hook": "I downloaded a fitness app to become disciplined. It immediately became disappointed in me.",
+        "title": "The Group Chat Before an Exam",
+        "theme": "student life",
+        "hook": "The group chat becomes extremely active exactly when studying becomes urgent.",
         "scenes": [
-            "APP: Day one. Let's crush this workout.",
-            "ME: Absolutely.",
-            "APP: Start with ten push-ups.",
-            "ME: Can we start with a motivational quote?",
-            "APP: Fine. Your ancestors did not evolve for this.",
-            "ME: That's aggressive.",
-            "APP: Great. Now do the push-ups."
+            "STUDENT: Guys, exam tomorrow. We should study.",
+            "CHAT: Sticker.",
+            "STUDENT: Seriously.",
+            "CHAT: Another sticker.",
+            "STUDENT: Has anyone finished the syllabus?",
+            "CHAT: Seen by 17 people.",
+            "STUDENT: Excellent. We are all equally prepared."
         ],
-        "nodes": ["MOTIVATION", "ME", "WORKOUT"],
-        "background_urls": ["https://assets.mixkit.co/videos/52317/52317-720.mp4","https://assets.mixkit.co/videos/40248/40248-720.mp4","https://assets.mixkit.co/videos/52089/52089-720.mp4","https://assets.mixkit.co/videos/4506/4506-720.mp4","https://assets.mixkit.co/videos/52079/52079-720.mp4"]
+        "nodes": ["STUDENT", "CHAT", "EXAM"]
     },
     {
-        "title": "When Your Phone Knows You Too Well",
-        "theme": "smartphone habits",
-        "hook": "My phone knows my habits better than my family does.",
+        "title": "When the Bus Arrives After You Stop Checking",
+        "theme": "commuting",
+        "hook": "Public transport has a sixth sense for the exact moment you stop watching for it.",
         "scenes": [
-            "PHONE: Your screen time increased today.",
-            "ME: I was busy.",
-            "PHONE: You watched seventeen videos about people making sandwiches.",
-            "ME: Research.",
-            "PHONE: At 2:14 AM?",
-            "ME: Midnight research is more advanced."
+            "ME: No bus yet.",
+            "ME: I will check my phone for one second.",
+            "BUS: Arrives.",
+            "ME: Wait!",
+            "BUS: Leaves.",
+            "ME: Incredible. I looked away for one second and missed the entire plot."
         ],
-        "nodes": ["PHONE", "SCREEN TIME", "RESEARCH"],
-        "background_urls": ["https://assets.mixkit.co/videos/4837/4837-720.mp4","https://assets.mixkit.co/videos/8744/8744-720.mp4","https://assets.mixkit.co/videos/231/231-720.mp4","https://assets.mixkit.co/videos/4808/4808-720.mp4","https://assets.mixkit.co/videos/28286/28286-720.mp4"]
+        "nodes": ["BUS STOP", "PHONE", "BUS"]
+    },
+    {
+        "title": "The Shopping Cart You Abandoned",
+        "theme": "online shopping habits",
+        "hook": "You leave one item in a shopping cart and the internet suddenly becomes very concerned.",
+        "scenes": [
+            "ME: I am not buying this today.",
+            "PHONE: Your cart misses you.",
+            "ME: It has been twenty minutes.",
+            "PHONE: We saved your item.",
+            "ME: I know.",
+            "PHONE: It will also remind you again tomorrow.",
+            "ME: Great. Even my cart has follow-up skills."
+        ],
+        "nodes": ["CART", "PHONE", "ME"]
+    },
+    {
+        "title": "The Alarm Clock Negotiation",
+        "theme": "morning routines",
+        "hook": "My alarm clock and I have completely different ideas about when tomorrow begins.",
+        "scenes": [
+            "ALARM: Wake up.",
+            "ME: Five more minutes.",
+            "ALARM: You said that five minutes ago.",
+            "ME: I am consistent.",
+            "ALARM: You also said it yesterday.",
+            "ME: Please stop keeping records."
+        ],
+        "nodes": ["ALARM", "ME", "MORNING"]
     }
 ]
 
 today = datetime.now(timezone.utc).date().toordinal()
 scenario = SCENARIOS[today % len(SCENARIOS)]
-
-# Keep the output deterministic for a given day while rotating through original sketches.
 script = scenario["scenes"]
+
 payload = {
     "generated_at": datetime.now(timezone.utc).isoformat(),
     "source": {
         "title": scenario["title"],
         "full_title": scenario["title"],
         "link": "",
-        "description": f"Original ContentPilot comedy sketch about {scenario['theme']}.",
+        "description": f"Original fictional comedy sketch inspired by the everyday situation: {scenario['theme']}.",
         "domain": "ContentPilot Original",
         "image": ""
     },
@@ -122,16 +146,16 @@ payload = {
     "format": CFG["channel"],
     "candidates_considered": len(SCENARIOS),
     "visual_nodes": scenario["nodes"],
-    "background_urls": scenario.get("background_urls", []),
+    "background_urls": [],
     "genre": "comedy",
     "theme": scenario["theme"],
     "original": True,
     "story": {
-        "hook": "Instant relatable setup",
-        "signal": "Everyday situation",
-        "mechanism": "Escalating misunderstanding",
-        "meaning": "A recognizable human-vs-technology joke",
-        "close": "Short punchline"
+        "hook": "Real-life relatable setup",
+        "signal": "Ordinary everyday situation",
+        "mechanism": "Original fictional escalation",
+        "meaning": "Light observational comedy",
+        "close": "Original punchline"
     }
 }
 
