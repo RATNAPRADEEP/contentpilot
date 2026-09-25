@@ -246,7 +246,16 @@ for i,text_line in enumerate(scripts):
             "drawbox=x=110:y=760:w=800:h=110:color=334766:t=fill"
         )
 
-    # Speech-bubble style dialogue card, kinetic scene label, and large reaction zone.
+    # Clean short-form presentation: no dialogue panel.
+    # Characters and environment stay visually dominant; dialogue is shown as
+    # compact bottom subtitles with a subtle translucent background for readability.
+    subtitle_style = (
+        f"drawbox=x=55:y=1600:w=970:h=210:color=000000@0.62:t=fill,"
+        f"drawtext=fontfile={font}:text='SCENE {i+1}':fontcolor=38bdf8:fontsize=20:x=78:y=1622,"
+        f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=white:fontsize=38:line_spacing=10:x=78:y=1660,"
+        f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.35:fontsize=15:x=78:y=1850"
+    )
+
     fc=(
         f"color=c={bg}:s=1080x1920:r=30[base];"
         f"[base]{motif}[m];"
@@ -254,22 +263,14 @@ for i,text_line in enumerate(scripts):
         f"[2:v]scale=270:375[r];"
         f"[m][h]overlay=x=60:y=730:enable='between(t,0,{dur:.2f})'[c1];"
         f"[c1][r]overlay=x=600:y=680:enable='between(t,0,{dur:.2f})'[c2];"
-        f"[c2]drawbox=x=55:y=75:w=970:h=115:color=05070d@0.90:t=fill,"
-        f"drawtext=fontfile={font}:text='CONTENTPILOT':fontcolor=white:fontsize=34:x=80:y=112,"
-        f"drawtext=fontfile={font}:text='COMEDY':fontcolor=38bdf8:fontsize=34:x=325:y=112,"
-        f"drawtext=fontfile={regular}:text='ORIGINAL SHORT':fontcolor=white@0.55:fontsize=21:x=785:y=120,"
-        f"drawbox=x=70:y=1030:w=940:h=420:color=ffffff@0.96:t=fill,"
-        f"drawbox=x=70:y=1030:w=16:h=420:color=38bdf8:t=fill,"
-        f"drawtext=fontfile={font}:text='SCENE {i+1}':fontcolor=0f172a:fontsize=24:x=110:y=1080,"
-        f"drawtext=fontfile={font}:textfile='{scene_txt}':fontcolor=0b1220:fontsize=43:line_spacing=14:x=110:y=1140,"
-        f"drawtext=fontfile={regular}:text='WATCH THE REACTION →':fontcolor=0f172a@0.55:fontsize=20:x=110:y=1380,"
-        f"drawtext=fontfile={regular}:text='ContentPilot Original':fontcolor=white@0.42:fontsize=17:x=75:y=1845[v];"
+        f"[c2]{subtitle_style}[v];"
         f"[3:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[voice];"
         f"[4:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[music];"
         f"[5:a]apad,atrim=duration={dur:.2f},asetpts=PTS-STARTPTS[sfx];"
         f"[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
         f"alimiter=limit=0.92[a]"
     )
+
 
     cmd=[
         "ffmpeg","-y","-f","lavfi","-i","color=c=0b1020:s=1080x1920:r=30",
