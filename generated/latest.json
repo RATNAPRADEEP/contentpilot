@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T16:42:04.788971+00:00",
+  "generated_at": "2026-09-25T16:44:10.500681+00:00",
   "source": {
     "title": "The Group Chat Before an Exam",
     "full_title": "The Group Chat Before an Exam",
@@ -33,6 +33,34 @@
     "CHAT",
     "EXAM"
   ],
+  "characters": {
+    "primary": [
+      "arjun",
+      "byte"
+    ],
+    "available": [
+      "arjun",
+      "byte",
+      "maya"
+    ],
+    "registry": {
+      "arjun": {
+        "name": "Arjun",
+        "type": "human",
+        "description": "young adult, practical, expressive, easily stressed by everyday problems"
+      },
+      "byte": {
+        "name": "Byte",
+        "type": "ai",
+        "description": "friendly humanoid AI, literal-minded, calm, unexpectedly funny"
+      },
+      "maya": {
+        "name": "Maya",
+        "type": "human",
+        "description": "confident young adult, observant, dry sense of humor"
+      }
+    }
+  },
   "background_urls": [],
   "genre": "comedy",
   "theme": "student life",
