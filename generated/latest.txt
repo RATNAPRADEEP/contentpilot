@@ -1,9 +1,9 @@
-Here is today's tech discovery: Foong Chee Mun (CEO, YTL AI Labs / CPO, Ryt Bank) says the "AI is coming for engineers" take is too simplistic — and his own headcount numbers are the receipts.
+Today's tech signal: Foong Chee Mun (CEO, YTL AI Labs / CPO, Ryt Bank) says the "AI is coming for engineers" take is too simplistic — and his own headcount numbers are the receipts.
 
-Foong Chee Mun (CEO, YTL AI Labs / CPO, Ryt Bank) says the "AI is coming for engineers" take is too simplistic — and his own headcount numbers are the receipts is worth a look because it points to a practical change in technology. Here is the useful part: what happened, why it matters, and what you can do with it.
+The source reports: TL;DR: A CEO looked straight at the &quot;AI is coming for engineers&quot; panic and called it too simple.
 
-The important part is not just the headline. Look at the underlying problem, the workflow, and what can be reused.
+Another detail from the source is: He didn&#39;t say why — not until his own hiring numbers came up.
 
-That is the kind of signal worth watching if you build with technology or automation.
+The practical takeaway is simple: treat the headline as a signal, open the original source, verify the important claims, and then decide whether the idea is useful for your own work.
 
-Follow for another practical discovery tomorrow.
+ContentPilot turns public signals into short, repeatable videos. Follow for the next one.
