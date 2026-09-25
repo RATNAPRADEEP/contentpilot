@@ -24,10 +24,11 @@
     "release",
     "model",
     "robot",
-    "cloud"
+    "software"
   ],
   "feeds": [
     "https://hnrss.org/frontpage",
-    "https://www.reddit.com/r/artificial/.rss"
+    "https://github.blog/feed/",
+    "https://export.arxiv.org/rss/cs.AI"
   ]
 }
