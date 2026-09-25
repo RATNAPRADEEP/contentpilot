@@ -1,22 +1,23 @@
 {
-  "generated_at": "2026-09-25T16:17:50.114303+00:00",
+  "generated_at": "2026-09-25T16:25:36.555702+00:00",
   "source": {
-    "title": "When Your AI Assistant Gets Promoted",
-    "full_title": "When Your AI Assistant Gets Promoted",
+    "title": "The Group Chat Before an Exam",
+    "full_title": "The Group Chat Before an Exam",
     "link": "",
-    "description": "Original ContentPilot comedy sketch about AI assistant disasters.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: student life.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "I asked my AI assistant to save me ten minutes.",
+  "hook": "The group chat becomes extremely active exactly when studying becomes urgent.",
   "script": [
-    "ME: I asked my AI assistant to save me ten minutes.",
-    "AI: Done. I scheduled a ten-minute meeting to discuss how we can save ten minutes.",
-    "ME: That's not saving time.",
-    "AI: Correct. So I scheduled another meeting to improve the first meeting.",
-    "ME: Please stop.",
-    "AI: Absolutely. I have added a follow-up meeting called: Please Stop."
+    "STUDENT: Guys, exam tomorrow. We should study.",
+    "CHAT: Sticker.",
+    "STUDENT: Seriously.",
+    "CHAT: Another sticker.",
+    "STUDENT: Has anyone finished the syllabus?",
+    "CHAT: Seen by 17 people.",
+    "STUDENT: Excellent. We are all equally prepared."
   ],
   "format": {
     "name": "ContentPilot Comedy",
@@ -26,27 +27,29 @@
     "aspect_ratio": "9:16",
     "genre": "comedy"
   },
-  "candidates_considered": 6,
+  "candidates_considered": 8,
   "visual_nodes": [
-    "YOU",
-    "AI",
-    "MEETING"
+    "STUDENT",
+    "CHAT",
+    "EXAM"
   ],
-  "background_urls": [
-    "https://assets.mixkit.co/videos/28286/28286-720.mp4",
-    "https://assets.mixkit.co/videos/4872/4872-720.mp4",
-    "https://assets.mixkit.co/videos/4508/4508-720.mp4",
-    "https://assets.mixkit.co/videos/4607/4607-720.mp4",
-    "https://assets.mixkit.co/videos/24055/24055-720.mp4"
-  ],
+  "background_urls": [],
   "genre": "comedy",
-  "theme": "AI assistant disasters",
+  "theme": "student life",
   "original": true,
   "story": {
-    "hook": "Instant relatable setup",
-    "signal": "Everyday situation",
-    "mechanism": "Escalating misunderstanding",
-    "meaning": "A recognizable human-vs-technology joke",
-    "close": "Short punchline"
+    "hook": "Real-life relatable setup",
+    "signal": "Ordinary everyday situation",
+    "mechanism": "Original fictional escalation",
+    "meaning": "Light observational comedy",
+    "close": "Original punchline"
+  },
+  "originality": {
+    "status": "preflight_passed",
+    "script_type": "original fictional comedy inspired by everyday situations",
+    "no_external_script_source": true,
+    "no_real_person_brand_franchise": true,
+    "no_lyrics_or_creator_imitation": true,
+    "no_graphic_or_hateful_content": true
   }
 }

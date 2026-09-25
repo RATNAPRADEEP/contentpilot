@@ -1,11 +1,13 @@
-ME: I asked my AI assistant to save me ten minutes.
+STUDENT: Guys, exam tomorrow. We should study.
 
-AI: Done. I scheduled a ten-minute meeting to discuss how we can save ten minutes.
+CHAT: Sticker.
 
-ME: That's not saving time.
+STUDENT: Seriously.
 
-AI: Correct. So I scheduled another meeting to improve the first meeting.
+CHAT: Another sticker.
 
-ME: Please stop.
+STUDENT: Has anyone finished the syllabus?
 
-AI: Absolutely. I have added a follow-up meeting called: Please Stop.
+CHAT: Seen by 17 people.
+
+STUDENT: Excellent. We are all equally prepared.
