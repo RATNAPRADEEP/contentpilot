@@ -189,6 +189,53 @@ make_character(robot_happy,"robot","happy",1)
 make_character(robot_talk,"robot","talk",0)
 make_character(robot_talk_b,"robot","talk",1)
 
+
+def make_scene_background(path, theme, scene_index):
+    """Create an original illustrated environment locally; no stock footage."""
+    W, H = 1080, 1920
+    im = Image.new("RGB", (W, H), (18, 24, 40))
+    d = ImageDraw.Draw(im)
+
+    if "morning" in theme:
+        for y in range(0, 1250):
+            t = y / 1250
+            c = (int(35-10*t), int(50-12*t), int(75-18*t))
+            d.line((0, y, W, y), fill=c)
+        d.rounded_rectangle((100,170,520,650),24,fill=(24,33,53),outline=(74,90,118),width=8)
+        d.rectangle((125,195,495,625),fill=(119,157,190))
+        d.ellipse((250,270,390,410),fill=(246,190,91))
+        d.polygon([(65,135),(205,145),(185,650),(80,700)],fill=(66,47,73))
+        d.polygon([(555,145),(695,135),(670,700),(570,650)],fill=(66,47,73))
+        for y in range(1250,H):
+            d.line((0,y,W,y),fill=(112,78,70))
+        d.rounded_rectangle((120,1370,960,1810),40,fill=(113,77,84),outline=(145,102,106),width=6)
+        d.rounded_rectangle((150,760,930,1110),35,fill=(50,45,57),outline=(91,82,99),width=8)
+        d.rounded_rectangle((115,930,965,1230),35,fill=(198,198,203),outline=(130,130,140),width=6)
+        d.rounded_rectangle((250,1000,930,1240),30,fill=(92,74,105))
+        d.rounded_rectangle((175,965,410,1080),25,fill=(232,229,222),outline=(180,178,176),width=5)
+        d.rounded_rectangle((700,680,930,880),18,fill=(92,63,55),outline=(125,89,72),width=7)
+        d.rectangle((730,875,760,1010),fill=(72,48,43))
+        d.rectangle((870,875,900,1010),fill=(72,48,43))
+        d.rectangle((800,565,825,690),fill=(61,48,48))
+        d.polygon([(740,565),(885,565),(850,475),(775,475)],fill=(236,192,108),outline=(130,96,58))
+        d.rounded_rectangle((755,710,875,775),12,fill=(22,27,34),outline=(245,196,72),width=5)
+        d.text((786,726),"07:00",fill=(245,196,72))
+        d.rounded_rectangle((480,1210,590,1265),12,fill=(28,32,40),outline=(150,160,180),width=4)
+        for box in [(780,220,900,350),(620,250,700,330)]:
+            d.rounded_rectangle(box,12,fill=(53,67,92),outline=(99,115,140),width=4)
+        for x,y in [(1000,780),(980,740),(1030,720)]:
+            d.ellipse((x-28,y-80,x+28,y),fill=(56,112,76))
+        d.rectangle((980,800,1040,900),fill=(134,91,66))
+    else:
+        for y in range(H):
+            t = y / H
+            d.line((0,y,W,y),fill=(int(18+20*t),int(25+18*t),int(42+20*t)))
+        d.rounded_rectangle((70,180,1010,880),30,fill=(35,48,70),outline=(80,100,125),width=6)
+        d.rounded_rectangle((120,260,960,760),25,fill=(14,22,38))
+        d.rounded_rectangle((90,900,990,1260),35,fill=(74,61,78),outline=(110,90,105),width=6)
+        d.rounded_rectangle((120,1320,960,1810),40,fill=(45,55,70),outline=(75,88,105),width=6)
+    im.save(path, "PNG")
+
 # ---------- Procedural comedy audio ----------
 def music_wav(path, seconds, style):
     sr=44100; n=int(seconds*sr); buf=[0.0]*n
@@ -249,6 +296,9 @@ for i,text_line in enumerate(scripts):
     speaker_key = "byte" if speaker_name == "Byte" else "arjun"
     subtitle = f"{speaker_name}: {words.strip()}" if words.strip() else speaker_name
     open(scene_txt,"w",encoding="utf-8").write(wrap(subtitle, width=32, max_lines=2))
+
+    background=os.path.join(build,f"background_{i}.png")
+    make_scene_background(background, theme, i)
 
     music=os.path.join(build,f"music_{i}.wav")
     sfx=os.path.join(build,f"sfx_{i}.wav")
@@ -376,8 +426,7 @@ for i,text_line in enumerate(scripts):
     )
 
     fc=(
-        "color=c="+bg+":s=1080x1920:r=30[base];"
-        "[base]"+motif+"[m];"
+        "[0:v]scale=1080:1920[m];"
         "[0:v]scale=350:705[h0s];"
         "[1:v]scale=350:705[r0s];"
         "[2:v]scale=370:745[h1s];"
@@ -388,7 +437,7 @@ for i,text_line in enumerate(scripts):
         "[c3][r1s]overlay=x='675+9*sin(t*2+1)':y='535+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
         "[c4]"+name_labels+","+subtitle_style+","
         "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ALARM CLOCK NEGOTIATION':fontcolor=white@0.78:fontsize=25:x=70:y=55[v];"
-        "[4:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
+        "[7:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
         "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
         "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
         "[voice][music][sfx]amix=inputs=3:duration=longest:weights='1 0.16 0.28':normalize=0,"
@@ -397,7 +446,7 @@ for i,text_line in enumerate(scripts):
 
     cmd=[
         "ffmpeg","-y",
-        "-i",h0,"-i",r0,"-i",h1,"-i",r1,"-i",voice,"-i",music,"-i",sfx,
+        "-loop","1","-i",background,"-i",h0,"-i",r0,"-i",h1,"-i",r1,"-i",voice,"-i",music,"-i",sfx,
         "-filter_complex",fc,"-map","[v]","-map","[a]","-t",f"{dur:.2f}",
         "-r","30","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
         "-c:a","aac","-b:a","128k",seg
