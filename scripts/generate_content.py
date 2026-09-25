@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json, os, re, urllib.request, xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, "data/config.json"), encoding="utf-8"))
@@ -12,9 +13,9 @@ def clean(value):
     value = re.sub(r"https?://\S+", " ", value)
     return re.sub(r"\s+", " ", value).strip()
 
-def fetch(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "ContentPilot/0.3"})
-    with urllib.request.urlopen(req, timeout=20) as response:
+def fetch(url, timeout=20):
+    req = urllib.request.Request(url, headers={"User-Agent": "ContentPilot/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.read()
 
 def parse_feed(raw):
@@ -36,6 +37,23 @@ def parse_feed(raw):
             items.append({"title": title, "link": link, "description": description})
     return items
 
+def find_image(link):
+    if not link:
+        return ""
+    try:
+        raw = fetch(link, timeout=12).decode("utf-8", errors="ignore")
+        patterns = [
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, raw, re.I)
+            if match:
+                return match.group(1).replace("&amp;", "&")
+    except Exception as exc:
+        print(f"image lookup failed: {exc}")
+    return ""
+
 items = []
 for url in CFG.get("feeds", []):
     try:
@@ -48,8 +66,10 @@ def score(item):
     score_value = sum(text.count(k.lower()) for k in CFG.get("scoring_keywords", []))
     if any(k in text for k in ("launch", "released", "release", "new", "announced")):
         score_value += 3
-    if len(item["title"]) < 120:
-        score_value += 1
+    if len(item["title"]) < 100:
+        score_value += 2
+    if item.get("description") and len(item["description"]) > 100:
+        score_value += 2
     return score_value
 
 unique = {}
@@ -59,38 +79,50 @@ for item in items:
 items = sorted(unique.values(), key=score, reverse=True)
 
 chosen = items[0] if items else {
-    "title": "How reusable automation changes everyday work",
+    "title": "A practical automation idea worth knowing",
     "link": "",
-    "description": "A practical look at reusable automation workflows."
+    "description": "Reusable automation can turn repeated manual work into a reliable workflow."
 }
 
 title = chosen["title"].strip()
 description = clean(chosen["description"])
-sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", description) if len(s.strip()) > 25]
+sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", description) if len(s.strip()) > 30]
 
-def clip(text, limit=220):
+def clip(text, limit=180):
     text = re.sub(r"\s+", " ", text).strip()
     return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + "."
 
-evidence_1 = clip(sentences[0] if sentences else "The source provides a new technology signal worth investigating.")
-evidence_2 = clip(sentences[1] if len(sentences) > 1 else "The useful question is what changes in the workflow and what can actually be verified.")
+evidence_1 = clip(sentences[0] if sentences else "The source describes a new technology development worth investigating.")
+evidence_2 = clip(sentences[1] if len(sentences) > 1 else "The interesting part is the workflow: what the system does, how it closes the loop, and where it can be useful.")
 
+domain = urlparse(chosen.get("link", "")).netloc.replace("www.", "")
+image = find_image(chosen.get("link", ""))
+
+# A more watchable short: hook -> explanation -> mechanism -> practical meaning -> close.
+hook = f"What if this changes the way we use AI? Meet {title}."
 script = [
-    f"Today's tech signal: {title}.",
-    f"The source reports: {evidence_1}",
-    f"Another detail from the source is: {evidence_2}",
-    "The practical takeaway is simple: treat the headline as a signal, open the original source, verify the important claims, and then decide whether the idea is useful for your own work.",
-    "ContentPilot turns public signals into short, repeatable videos. Follow for the next one."
+    hook,
+    f"Here is the signal. {evidence_1}",
+    f"Here is the interesting part. {evidence_2}",
+    "Why does that matter? Because the value is not just the headline. It is the workflow behind it — what gets automated, what gets checked, and what a developer could actually reuse.",
+    "ContentPilot finds a fresh public signal, turns it into a visual story, and packages it for a short-form video. Check the original source before relying on any claim."
 ]
 
 payload = {
     "generated_at": datetime.now(timezone.utc).isoformat(),
-    "source": chosen,
+    "source": {**chosen, "domain": domain, "image": image},
     "score": score(chosen),
-    "hook": script[0],
+    "hook": hook,
     "script": script,
     "format": CFG["channel"],
-    "candidates_considered": len(items)
+    "candidates_considered": len(items),
+    "story": {
+        "hook": "Curiosity hook",
+        "signal": "What the source says",
+        "mechanism": "What is interesting about it",
+        "meaning": "Why it matters",
+        "close": "Practical takeaway + verification"
+    }
 }
 
 json.dump(payload, open(os.path.join(OUT, "latest.json"), "w", encoding="utf-8"), indent=2)
@@ -99,3 +131,4 @@ with open(os.path.join(OUT, "latest.txt"), "w", encoding="utf-8") as handle:
 
 print("Selected:", title)
 print("Candidates:", len(items))
+print("Source image:", image or "none")
