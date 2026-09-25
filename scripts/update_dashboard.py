@@ -9,7 +9,6 @@ title = html.escape(data["source"]["title"])
 summary = html.escape(data["script"][1])
 source = html.escape(data["source"].get("link", ""))
 generated = html.escape(data["generated_at"])
-video = "../generated/contentpilot-latest.mp4"
 
 page = f"""<!doctype html>
 <html lang="en">
@@ -24,9 +23,9 @@ main{{max-width:960px;margin:auto;padding:32px 20px}}
 h1{{font-size:42px;margin-bottom:8px}}
 .badge{{display:inline-block;padding:7px 11px;border-radius:999px;background:#1e293b;font-size:12px}}
 a{{color:#7dd3fc}}
-video{{width:100%;max-height:70vh;border-radius:16px;background:#000}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}}
 .step{{padding:16px;background:#0f172a;border-radius:14px}}
+.status{{padding:14px;border-radius:12px;background:#102a1b;border:1px solid #1f6b3b}}
 </style>
 </head>
 <body><main>
@@ -36,8 +35,7 @@ video{{width:100%;max-height:70vh;border-radius:16px;background:#000}}
 <h2>{title}</h2>
 <p>{summary}</p>
 <p><small>Topic score: {data["score"]} · Candidates considered: {data["candidates_considered"]}</small></p>
-<video controls playsinline src="{video}"></video>
-<p><a href="{video}">Open/download latest video</a></p>
+<div class="status">Latest build completed. The rendered video is retained as a short-lived GitHub Actions artifact and is not stored in the repository.</div>
 {"<p><a href='"+source+"' target='_blank' rel='noreferrer'>Open original source</a></p>" if source else ""}
 </div>
 <div class="card"><h2>Pipeline</h2><div class="grid">
