@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json, os, re, subprocess, urllib.request
-from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 data = json.load(open(os.path.join(ROOT, "generated/latest.json"), encoding="utf-8"))
@@ -9,38 +8,24 @@ os.makedirs(build, exist_ok=True)
 
 audio = os.path.join(build, "voice.wav")
 video = os.path.join(ROOT, "generated", "contentpilot-latest.mp4")
-image = os.path.join(build, "source.jpg")
 
+# Fast, portable voice generation. The dialogue is intentionally conversational.
 voice_text = " ... ".join(data["script"])
 subprocess.run([
-    "espeak-ng", "-v", "en-us", "-s", "148", "-p", "42",
+    "espeak-ng", "-v", "en-us", "-s", "154", "-p", "50",
     "-w", audio, voice_text
 ], check=True)
-
-source_image = data.get("source", {}).get("image", "")
-has_image = False
-if source_image:
-    try:
-        req = urllib.request.Request(source_image, headers={"User-Agent": "ContentPilot/1.0"})
-        with urllib.request.urlopen(req, timeout=15) as response:
-            raw = response.read()
-        if len(raw) > 5000:
-            open(image, "wb").write(raw)
-            has_image = True
-    except Exception as exc:
-        print(f"source image unavailable: {exc}")
 
 font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 regular = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 title = data["source"]["title"]
-domain = data.get("source", {}).get("domain", "public source")
-nodes = data.get("visual_nodes", ["DISCOVER", "BUILD", "VERIFY"])
+nodes = data.get("visual_nodes", ["YOU", "AI", "CHAOS"])
 scripts = data["script"]
+scene_count = len(scripts)
 
-# Keep each scene readable while letting the narration drive the timing.
 weights = [max(1, len(s.split())) for s in scripts]
 total_words = sum(weights)
-total_duration = max(28, min(52, total_words / 2.15))
+total_duration = max(28, min(48, total_words / 2.35))
 starts, cursor = [], 0.0
 for weight in weights:
     starts.append(cursor)
@@ -49,7 +34,7 @@ for weight in weights:
 def safe(text):
     return re.sub(r"[^A-Za-z0-9 .,:!?&'’()\-_/]", "", text).strip()
 
-def wrap(text, width=28, max_lines=7):
+def wrap(text, width=27, max_lines=7):
     words = text.split()
     lines, line = [], ""
     for word in words:
@@ -70,86 +55,88 @@ for i, text in enumerate(scripts):
 
 title_path = os.path.join(build, "title.txt")
 with open(title_path, "w", encoding="utf-8") as f:
-    f.write(wrap(safe(title), 24, 5))
+    f.write(wrap(safe(title), 25, 4))
 
-domain_path = os.path.join(build, "domain.txt")
-with open(domain_path, "w", encoding="utf-8") as f:
-    f.write(domain.upper())
+node_paths = []
+for i, node in enumerate(nodes[:3]):
+    p = os.path.join(build, f"node_{i}.txt")
+    with open(p, "w", encoding="utf-8") as f:
+        f.write(safe(node))
+    node_paths.append(p)
 
-# A clean editorial system: moving background, source visual, kinetic cards,
-# progress bar, scene labels and high-contrast captions.
 filters = [
-    "drawbox=x=0:y=0:w=iw:h=ih:color=0x070b16@1:t=fill",
-    "drawbox=x=35:y=35:w=iw-70:h=ih-70:color=0x111827@1:t=fill",
-    f"drawtext=fontfile={font}:text='CONTENTPILOT':fontcolor=white@0.70:fontsize=30:x=58:y=58",
-    f"drawtext=fontfile={regular}:textfile='{domain_path}':fontcolor=white@0.50:fontsize=23:x=w-340:y=63",
+    "drawbox=x=0:y=0:w=iw:h=ih:color=0x080b14@1:t=fill",
+    "drawbox=x=32:y=32:w=iw-64:h=ih-64:color=0x111827@1:t=fill",
+    # Comic-style top frame.
+    "drawbox=x=58:y=58:w=964:h=82:color=0x0a0f1d@0.94:t=fill",
+    f"drawtext=fontfile={font}:text='CONTENTPILOT COMEDY':fontcolor=white@0.92:fontsize=28:x=78:y=82",
+    f"drawtext=fontfile={regular}:text='ORIGINAL SHORT':fontcolor=white@0.45:fontsize=20:x=w-285:y=86",
+    # Main visual stage.
+    "drawbox=x=62:y=185:w=956:h=690:color=0x0b1325@1:t=fill",
+    "drawbox=x=92:y=215:w=896:h=630:color=0x101b33@1:t=fill",
+    # Three character/concept cards.
+    "drawbox=x=105:y=315:w=250:h=300:color=0x17233c@1:t=fill",
+    "drawbox=x=415:y=270:w=250:h=390:color=0x1b2946@1:t=fill",
+    "drawbox=x=725:y=315:w=250:h=300:color=0x17233c@1:t=fill",
+    "drawbox=x=355:y=450:w=60:h=8:color=white@0.35:t=fill",
+    "drawbox=x=665:y=450:w=60:h=8:color=white@0.35:t=fill",
+    f"drawtext=fontfile={font}:textfile='{node_paths[0] if len(node_paths)>0 else title_path}':fontcolor=white@0.88:fontsize=28:x=125:y=455",
+    f"drawtext=fontfile={font}:textfile='{node_paths[1] if len(node_paths)>1 else title_path}':fontcolor=white@0.95:fontsize=28:x=435:y=455",
+    f"drawtext=fontfile={font}:textfile='{node_paths[2] if len(node_paths)>2 else title_path}':fontcolor=white@0.88:fontsize=28:x=745:y=455",
+    "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='SETUP  →  ESCALATION  →  PUNCHLINE':fontcolor=white@0.42:fontsize=19:x=250:y=705",
+    # Title strip.
+    "drawbox=x=100:y=760:w=880:h=80:color=0x05070d@0.92:t=fill",
+    f"drawtext=fontfile={font}:textfile='{title_path}':fontcolor=white@0.82:fontsize=23:x=125:y=783",
 ]
 
-if has_image:
-    # The image occupies the visual canvas; the text layer remains readable.
-    filters.insert(0, f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=8:1")
-    filters.append(f"drawbox=x=0:y=0:w=iw:h=ih:color=0x000000@0.42:t=fill")
-else:
-    # Fallback visual: an abstract AI/network motif made entirely in FFmpeg.
-    filters.extend([
-        "drawbox=x=75:y=210:w=930:h=720:color=0x0d172a@1:t=fill",
-        "drawbox=x=135:y=470:w=235:h=150:color=0x172b4d@1:t=fill",
-        "drawbox=x=422:y=670:w=235:h=150:color=0x172b4d@1:t=fill",
-        "drawbox=x=715:y=470:w=235:h=150:color=0x172b4d@1:t=fill",
-        "drawbox=x=422:y=280:w=235:h=150:color=0x243b63@1:t=fill",
-        "drawbox=x=370:y=545:w=55:h=6:color=white@0.28:t=fill",
-        "drawbox=x=535:y=430:w=6:h=240:color=white@0.28:t=fill",
-        "drawbox=x=655:y=545:w=60:h=6:color=white@0.28:t=fill",
-        f"drawtext=fontfile={font}:text='{nodes[0]}':fontcolor=white@0.90:fontsize=25:x=155:y=520",
-        f"drawtext=fontfile={font}:text='{nodes[1]}':fontcolor=white@0.90:fontsize=25:x=445:y=720",
-        f"drawtext=fontfile={font}:text='{nodes[2]}':fontcolor=white@0.90:fontsize=23:x=728:y=520",
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='CLOSED-LOOP':fontcolor=white@0.55:fontsize=20:x=455:y=330",
-    ])
-
-labels = ["HOOK", "THE SIGNAL", "THE INTERESTING PART", "WHY IT MATTERS", "TAKEAWAY"]
-
 for i, (text, start) in enumerate(zip(scripts, starts)):
-    end = starts[i + 1] if i + 1 < len(starts) else total_duration
-    textfile = os.path.join(build, f"scene_{i}.txt")
+    end = starts[i + 1] if i + 1 < scene_count else total_duration
+    scene_file = os.path.join(build, f"scene_{i}.txt")
+    # Active dialogue card.
     filters.append(
-        f"drawbox=x=52:y=975:w=976:h=650:color=0x05070d@0.90:t=fill:"
+        f"drawbox=x=52:y=930:w=976:h=720:color=0x05070d@0.96:t=fill:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
     filters.append(
-        f"drawtext=fontfile={font}:text='{labels[i]}':fontcolor=white@0.62:fontsize=27:x=78:y=1020:"
+        f"drawtext=fontfile={font}:text='SCENE {i+1:02d}':fontcolor=white@0.58:fontsize=24:x=78:y=970:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
     filters.append(
-        f"drawtext=fontfile={font}:textfile='{textfile}':fontcolor=white:fontsize=46:"
-        f"line_spacing=14:x=82:y=1110:enable='between(t,{start:.2f},{end:.2f})'"
+        f"drawtext=fontfile={font}:textfile='{scene_file}':fontcolor=white:fontsize=43:"
+        f"line_spacing=15:x=82:y=1045:enable='between(t,{start:.2f},{end:.2f})'"
     )
-    # Large active-scene progress indicator.
+    # Little comic reaction bar.
+    reaction = "SETUP" if i == 0 else ("ESCALATION" if i < scene_count - 1 else "PUNCHLINE")
+    reaction_path = os.path.join(build, f"reaction_{i}.txt")
+    with open(reaction_path, "w", encoding="utf-8") as f:
+        f.write(reaction)
     filters.append(
-        f"drawbox=x=58:y=h-92:w=(iw-116)*{(i+1)/len(scripts):.3f}:h=8:color=white@0.85:t=fill:"
+        f"drawtext=fontfile={font}:textfile='{reaction_path}':fontcolor=white@0.45:fontsize=22:x=78:y=1515:"
+        f"enable='between(t,{start:.2f},{end:.2f})'"
+    )
+    # Progress bar.
+    filters.append(
+        f"drawbox=x=58:y=h-80:w=(iw-116)*{(i+1)/scene_count:.3f}:h=7:color=white@0.82:t=fill:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
     filters.append(
-        f"drawtext=fontfile={regular}:text='{i+1}/5':fontcolor=white@0.55:fontsize=22:x=w-115:y=h-125:"
+        f"drawtext=fontfile={regular}:text='{i+1}/{scene_count}':fontcolor=white@0.45:fontsize=20:x=w-100:y=h-110:"
         f"enable='between(t,{start:.2f},{end:.2f})'"
     )
-
-# End-card source credit.
-filters.append(
-    f"drawtext=fontfile={regular}:text='SOURCE: {safe(domain)}':fontcolor=white@0.55:fontsize=20:x=58:y=h-55"
-)
 
 vf = ",".join(filters)
-inputs = ["ffmpeg", "-y"]
-if has_image:
-    inputs += ["-loop", "1", "-i", image]
-else:
-    inputs += ["-f", "lavfi", "-i", "color=c=0b1020:s=1080x1920:r=30"]
-inputs += ["-i", audio]
+inputs = [
+    "ffmpeg", "-y",
+    "-f", "lavfi", "-i", "color=c=0b1020:s=1080x1920:r=30",
+    "-i", audio
+]
 
 subprocess.run(inputs + [
-    "-vf", vf, "-t", f"{total_duration:.2f}",
+    "-vf", vf,
+    "-t", f"{total_duration:.2f}",
     "-c:v", "libx264", "-preset", "veryfast", "-crf", "25",
-    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
+    "-pix_fmt", "yuv420p",
+    "-c:a", "aac", "-b:a", "128k",
     "-shortest", video
 ], check=True)
 
