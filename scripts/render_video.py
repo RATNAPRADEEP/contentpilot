@@ -365,15 +365,14 @@ for i,text_line in enumerate(scripts):
         r0, r1 = robot_talk, robot_talk_b
 
     name_labels = (
-        "drawbox=x=75:y=500:w=230:h=58:color=000000@0.50:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ARJUN':fontcolor=white:fontsize=24:x=92:y=515,"
-        "drawbox=x=775:y=500:w=230:h=58:color=000000@0.50:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='BYTE':fontcolor=38bdf8:fontsize=24:x=800:y=515"
+        "drawbox=x=82:y=535:w=150:h=42:color=0b1220@0.78:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ARJUN':fontcolor=white:fontsize=19:x=96:y=545,"
+        "drawbox=x=848:y=535:w=150:h=42:color=082f49@0.78:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='BYTE':fontcolor=67e8f9:fontsize=19:x=874:y=545"
     )
     subtitle_style = (
-        "drawbox=x=75:y=1665:w=930:h=150:color=000000@0.55:t=fill,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile='"+scene_txt+"':fontcolor=white:fontsize=38:line_spacing=8:x=95:y=1690,"
-        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ContentPilot Original':fontcolor=white@0.28:fontsize=14:x=95:y=1845"
+        "drawbox=x=90:y=1650:w=900:h=155:color=000000@0.68:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:textfile='"+scene_txt+"':fontcolor=white:fontsize=36:line_spacing=8:x=115:y=1680"
     )
 
     fc=(
@@ -383,11 +382,16 @@ for i,text_line in enumerate(scripts):
         "[1:v]scale=330:665[r0];"
         "[2:v]scale=330:665[h1];"
         "[3:v]scale=330:665[r1];"
-        "[m][h0]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
-        "[c1][h1]overlay=x='40+8*sin(t*2)':y='575+4*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
-        "[c2][r0]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
-        "[c3][r1]overlay=x='700+8*sin(t*2+1)':y='575+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
-        "[c4]"+name_labels+","+subtitle_style+"[v];"
+        "[0:v]scale=350:705[h0s];"
+        "[1:v]scale=350:705[r0s];"
+        "[2:v]scale=370:745[h1s];"
+        "[3:v]scale=370:745[r1s];"
+        "[m][h0s]overlay=x='35+10*sin(t*2)':y='550+5*sin(t*5)':enable='lt(mod(t,0.8),0.4)'[c1];"
+        "[c1][h1s]overlay=x='25+12*sin(t*2)':y='535+5*sin(t*5)':enable='gte(mod(t,0.8),0.4)'[c2];"
+        "[c2][r0s]overlay=x='690+7*sin(t*2+1)':y='550+4*sin(t*5+1)':enable='lt(mod(t,0.8),0.4)'[c3];"
+        "[c3][r1s]overlay=x='675+9*sin(t*2+1)':y='535+4*sin(t*5+1)':enable='gte(mod(t,0.8),0.4)'[c4];"
+        "[c4]"+name_labels+","+subtitle_style+","
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ALARM CLOCK NEGOTIATION':fontcolor=white@0.78:fontsize=25:x=70:y=55[v];"
         "[4:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
         "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
         "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
