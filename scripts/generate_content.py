@@ -85,7 +85,13 @@ chosen = items[0] if items else {
 }
 
 title = chosen["title"].strip()
+display_title = title.split(":")[0].strip() if len(title) > 70 and ":" in title else title
+display_title = re.sub(r"\\s+", " ", display_title).strip()
+if len(display_title) > 64:
+    display_title = display_title[:64].rsplit(" ", 1)[0] + "..."
 description = clean(chosen["description"])
+description = re.sub(r"^arXiv:\\S+\\s+Announce Type:\\s*\\w+\\s*", "", description, flags=re.I)
+description = re.sub(r"^Abstract:\\s*", "", description, flags=re.I)
 sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", description) if len(s.strip()) > 30]
 
 def clip(text, limit=180):
@@ -99,7 +105,12 @@ domain = urlparse(chosen.get("link", "")).netloc.replace("www.", "")
 image = find_image(chosen.get("link", ""))
 
 # A more watchable short: hook -> explanation -> mechanism -> practical meaning -> close.
-hook = f"What if this changes the way we use AI? Meet {title}."
+if "mobile" in title.lower() or "phone" in title.lower():
+    hook = "What if an AI could learn to use your phone — and improve itself?"
+elif "agent" in title.lower():
+    hook = "AI agents are getting more interesting: this one learns from its own actions."
+else:
+    hook = f"Here is the tech signal worth knowing today: {display_title}."
 script = [
     hook,
     f"Here is the signal. {evidence_1}",
@@ -110,12 +121,13 @@ script = [
 
 payload = {
     "generated_at": datetime.now(timezone.utc).isoformat(),
-    "source": {**chosen, "domain": domain, "image": image},
+    "source": {**chosen, "title": display_title, "full_title": title, "domain": domain, "image": image},
     "score": score(chosen),
     "hook": hook,
     "script": script,
     "format": CFG["channel"],
     "candidates_considered": len(items),
+    "visual_nodes": ["AI FOR DATA", "AI FOR TRAINING", "MODEL ↔ HARNESS"] if "qwen-planner" in title.lower() else ["DISCOVER", "BUILD", "VERIFY"],
     "story": {
         "hook": "Curiosity hook",
         "signal": "What the source says",
