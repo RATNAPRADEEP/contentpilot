@@ -271,7 +271,7 @@ for i,text_line in enumerate(scripts):
 
     fc=(
         f"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=1.0:1[base];"
-        f"[base]{motif}[m];"
+        f"[base]eq=brightness=-0.05:saturation=0.95[m];"
         f"[1:v]scale=270:375[h];"
         f"[2:v]scale=270:375[r];"
         f"[m][h]overlay=x='55+8*sin(t*3)':y='710+6*sin(t*6)':enable='between(t,0,{dur:.2f})'[c1];"
