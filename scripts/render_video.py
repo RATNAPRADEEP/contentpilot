@@ -469,14 +469,6 @@ for i,text_line in enumerate(scripts):
             "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='PRESENTATION MODE':fontcolor=white:fontsize=34:x='340+25*sin(t*1.1)':y=360"
         )
 
-    # The active speaker talks; the listener stays neutral/reactive.
-    if speaker_key == "arjun":
-        h0, h1 = human_talk, human_talk_b
-        r0, r1 = robot, robot_happy
-    else:
-        h0, h1 = human, human_shock
-        r0, r1 = robot_talk, robot_talk_b
-
     # Full comedy render: original characters + illustrated environment + voice,
     # music, SFX and readable subtitles. No stock footage or copyrighted characters.
     subtitle_style = (
