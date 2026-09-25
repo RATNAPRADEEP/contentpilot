@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 data = json.load(open(os.path.join(ROOT, "generated/latest.json"), encoding="utf-8"))
 theme = data.get("theme", "").lower()
+scene_plan = data.get("scene_plan", [])
 build = os.path.join(ROOT, "build")
 os.makedirs(build, exist_ok=True)
 video = os.path.join(ROOT, "generated", "contentpilot-latest.mp4")
@@ -188,9 +189,14 @@ make_character(robot,"robot","neutral",0)
 make_character(robot_happy,"robot","happy",1)
 make_character(robot_talk,"robot","talk",0)
 make_character(robot_talk_b,"robot","talk",1)
+# True sleeping pose for lines where the character is still in bed.
+with Image.open(human).convert("RGBA") as _sleep_src:
+    _sleep = _sleep_src.rotate(90, expand=True, resample=Image.Resampling.BICUBIC)
+    _sleep.save(os.path.join(build, "character-human-sleep.png"), "PNG")
+human_sleep = os.path.join(build, "character-human-sleep.png")
 
 
-def make_scene_background(path, theme, scene_index):
+def make_scene_background(path, theme, scene_index, action=""):
     """Create an original illustrated environment locally; no stock footage."""
     W, H = 1080, 1920
     im = Image.new("RGB", (W, H), (18, 24, 40))
@@ -241,6 +247,38 @@ def make_scene_background(path, theme, scene_index):
         d.rectangle((975,760,1025,900),fill=(133,91,66))
         d.ellipse((940,650,1010,790),fill=(58,116,78))
         d.ellipse((985,600,1045,760),fill=(52,104,72))
+
+        # Literal visual anchors for the exact spoken action.
+        if action == "alarm_ringing":
+            d.rounded_rectangle((405,520,675,700),35,fill=(220,68,74),outline=(255,215,120),width=8)
+            d.ellipse((465,555,615,705),fill=(245,228,194),outline=(80,55,50),width=6)
+            d.line((540,630,540,585),fill=(55,55,60),width=8); d.line((540,630,580,650),fill=(55,55,60),width=8)
+            d.arc((345,465,420,555),200,340,fill=(255,210,90),width=8); d.arc((660,465,735,555),20,160,fill=(255,210,90),width=8)
+            d.text((440,720),"RING RING",fill=(255,225,120))
+        elif action in ("keeping_record","showing_record"):
+            d.rounded_rectangle((405,480,690,800),20,fill=(244,238,220),outline=(95,72,60),width=7)
+            d.text((450,525),"WAKE-UP LOG",fill=(50,45,45))
+            d.text((455,595),"5 MIN  x  8",fill=(50,45,45))
+            d.text((455,655),"YESTERDAY  40 MIN",fill=(180,55,55))
+            d.line((450,715,650,715),fill=(120,110,100),width=4)
+        elif action == "showing_backup":
+            for off in (0,25,50):
+                d.rounded_rectangle((420+off,500+off,700+off,690+off),18,fill=(245,194,73),outline=(110,82,35),width=6)
+            d.text((470,555),"BACKUP 01",fill=(55,45,30))
+            d.text((495,615),"BACKUP 02",fill=(55,45,30))
+        elif action == "negotiating":
+            d.rounded_rectangle((405,485,720,650),35,fill=(250,250,250),outline=(90,90,100),width=6)
+            d.polygon([(470,650),(520,650),(495,700)],fill=(250,250,250))
+            d.text((470,540),"FIVE MORE",fill=(35,40,50))
+            d.text((500,585),"MINUTES?",fill=(35,40,50))
+        elif action == "pleading":
+            d.rounded_rectangle((410,480,700,670),35,fill=(250,250,250),outline=(90,90,100),width=6)
+            d.text((465,535),"PLEASE...",fill=(55,55,65))
+            d.text((455,595),"NO MORE RECORDS",fill=(55,55,65))
+        elif action == "getting_up":
+            d.ellipse((420,470,690,740),outline=(250,205,90),width=10)
+            d.text((465,570),"07:00",fill=(250,205,90))
+            d.text((445,635),"OKAY. UP.",fill=(255,255,255))
     else:
         for y in range(H):
             t = y / H
@@ -297,23 +335,27 @@ styles=["playful","curious","tension","chaos","punchline","playful"]
 segments=[]
 
 for i,text_line in enumerate(scripts):
-    # One voice file per scene prevents dialogue from being cut at estimated boundaries.
+    # Actual spoken WAV duration controls the whole scene. Subtitle and visual action
+    # begin at the same timestamp as the speech and end with it.
     voice=os.path.join(build,f"voice_{i}.wav")
     spoken=safe(text_line).replace(":", ": ")
     run(["espeak-ng","-v","en-us","-s","158","-p","50","-w",voice,spoken])
     voice_dur=duration(voice)
-    dur=max(3.2,min(7.0,voice_dur+0.65))
-    scene_txt=os.path.join(build,f"scene_{i}.txt")
+    dur=max(2.8,min(7.0,voice_dur+0.35))
+
+    plan = scene_plan[i] if i < len(scene_plan) else {}
     raw = safe(text_line)
     speaker, _, words = raw.partition(":")
-    ai_speakers = {"CHAT", "ALARM", "PHONE", "POWER", "LIFT"}
-    speaker_name = "Byte" if speaker in ai_speakers else "Arjun"
-    speaker_key = "byte" if speaker_name == "Byte" else "arjun"
+    actor = plan.get("actor", "arjun")
+    action = plan.get("action", "talking")
+    focus = plan.get("focus", "")
+    speaker_name = "Byte" if actor == "byte" else ("Arjun" if actor == "arjun" else speaker.title())
     subtitle = f"{speaker_name}: {words.strip()}" if words.strip() else speaker_name
-    open(scene_txt,"w",encoding="utf-8").write(wrap(subtitle, width=32, max_lines=2))
+    scene_txt=os.path.join(build,f"scene_{i}.txt")
+    open(scene_txt,"w",encoding="utf-8").write(wrap(subtitle, width=34, max_lines=2))
 
     background=os.path.join(build,f"background_{i}.png")
-    make_scene_background(background, theme, i)
+    make_scene_background(background, theme, i, action)
 
     music=os.path.join(build,f"music_{i}.wav")
     sfx=os.path.join(build,f"sfx_{i}.wav")
@@ -321,8 +363,14 @@ for i,text_line in enumerate(scripts):
     sfx_wav(sfx,dur,i)
 
     seg=os.path.join(build,f"segment_{i}.mp4")
-    h=human_shock if i in (2,4,5) else human_talk
-    r=robot_happy if i in (1,3,5) else robot_talk
+    # Pose follows the spoken action rather than the scene number.
+    arjun_reactive = human_shock if action in ("impatient","panicking","surprised","stunned","exasperated") else human
+    arjun_active = human_talk_b if action in ("negotiating","pleading","asking","presenting_from_memory","presenting") else human_talk
+    if action == "sleepy":
+        arjun_active = human_sleep
+    byte_active = robot_happy if action in ("alarm_ringing","sticker","bus_arrives","notification","saved_item","reminder","seen") else robot_talk
+    h = arjun_active if actor == "arjun" else arjun_reactive
+    r = byte_active if actor == "byte" else robot
 
     # Animated, scene-specific illustrated backgrounds.
     # Everything is generated locally with FFmpeg; no stock footage is used.
@@ -432,22 +480,45 @@ for i,text_line in enumerate(scripts):
     # Full comedy render: original characters + illustrated environment + voice,
     # music, SFX and readable subtitles. No stock footage or copyrighted characters.
     subtitle_style = (
-        "drawbox=x=85:y=1605:w=910:h=190:color=000000@0.62:t=fill,"
+        "drawbox=x=85:y=1530:w=910:h=300:color=000000@0.72:t=fill,"
         "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
-        "textfile='"+scene_txt+"':fontcolor=white:fontsize=38:line_spacing=10:x=115:y=1640"
+        "textfile='"+scene_txt+"':fontcolor=white:fontsize=36:line_spacing=10:x=115:y=1570"
     )
 
+    # The active speaker stays the active speaker for the entire utterance.
+    # There is no arbitrary pose swap that can contradict the spoken line.
+    if actor == "arjun":
+        active_x, active_y = "60+10*sin(t*2)", "520+5*sin(t*3)"
+        listener_x, listener_y = "690+8*sin(t*1.5)", "555+4*sin(t*3+1)"
+    else:
+        active_x, active_y = "690+8*sin(t*1.5)", "520+5*sin(t*3)"
+        listener_x, listener_y = "60+10*sin(t*2)", "555+4*sin(t*3+1)"
+    if action == "sleepy":
+        char_filter = (
+            "[1:v]scale=470:235[h0s];[2:v]scale=360:730[r0s];"
+            "[3:v]scale=470:235[h1s];[4:v]scale=360:730[r1s];"
+            "[m][h0s]overlay=x='330+10*sin(t*1.4)':y='1010+5*sin(t*2)'[c1];"
+            "[c1][r0s]overlay=x='690+8*sin(t*1.5)':y='555+4*sin(t*3+1)'[c2];"
+            "[c2][h1s]overlay=x='330+10*sin(t*1.4)':y='1010+5*sin(t*2)'[c3];"
+            "[c3][r1s]overlay=x='690+8*sin(t*1.5)':y='555+4*sin(t*3+1)'[c4];"
+        )
+    else:
+        char_filter = (
+            "[1:v]scale=360:730[h0s];[2:v]scale=360:730[r0s];"
+            "[3:v]scale=380:770[h1s];[4:v]scale=380:770[r1s];"
+            "[m][h0s]overlay=x='"+active_x+"':y='"+active_y+"'[c1];"
+            "[c1][r0s]overlay=x='"+listener_x+"':y='"+listener_y+"'[c2];"
+            "[c2][h1s]overlay=x='"+active_x+"':y='"+active_y+"'[c3];"
+            "[c3][r1s]overlay=x='"+listener_x+"':y='"+listener_y+"'[c4];"
+        )
+    focus_safe = safe(focus.replace("_", " ")).upper()[:24]
+    focus_txt = os.path.join(build,f"focus_{i}.txt")
+    open(focus_txt,"w",encoding="utf-8").write(focus_safe)
     fc=(
-        "[0:v]scale=1080:1920[m];"
-        "[1:v]scale=360:730[h0s];"
-        "[2:v]scale=360:730[r0s];"
-        "[3:v]scale=380:770[h1s];"
-        "[4:v]scale=380:770[r1s];"
-        "[m][h0s]overlay=x='20+12*sin(t*1.7)':y='560+5*sin(t*4)':enable='lt(mod(t,0.75),0.38)'[c1];"
-        "[c1][h1s]overlay=x='15+14*sin(t*1.7)':y='545+5*sin(t*4)':enable='gte(mod(t,0.75),0.38)'[c2];"
-        "[c2][r0s]overlay=x='700+8*sin(t*1.6+1)':y='560+4*sin(t*4+1)':enable='lt(mod(t,0.75),0.38)'[c3];"
-        "[c3][r1s]overlay=x='685+10*sin(t*1.6+1)':y='545+4*sin(t*4+1)':enable='gte(mod(t,0.75),0.38)'[c4];"
-        "[c4]"+subtitle_style+"[v];"
+        "[0:v]scale=1080:1920[m];"+char_filter+
+        "[c4]drawbox=x=70:y=1420:w=940:h=95:color=111827@0.78:t=fill,"
+        "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
+        "textfile='"+focus_txt+"':fontcolor=fde68a:fontsize=25:x=105:y=1450,"+subtitle_style+"[v];"
         "[5:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[voice];"
         "[6:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[music];"
         "[7:a]apad,atrim=duration="+f"{dur:.2f}"+",asetpts=PTS-STARTPTS[sfx];"
