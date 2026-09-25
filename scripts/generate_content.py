@@ -122,16 +122,18 @@ SCENARIOS = [
     {
         "title": "The Alarm Clock Negotiation",
         "theme": "morning routines",
-        "hook": "My alarm clock and I have completely different ideas about when tomorrow begins.",
+        "hook": "My alarm clock has started keeping evidence against me.",
         "scenes": [
-            "ALARM: Wake up.",
+            "ALARM: Wake up. It is seven.",
             "ME: Five more minutes.",
-            "ALARM: You said that five minutes ago.",
-            "ME: I am consistent.",
-            "ALARM: You also said it yesterday.",
-            "ME: Please stop keeping records."
+            "ALARM: You said five minutes five minutes ago.",
+            "ME: I am negotiating.",
+            "ALARM: Yesterday you negotiated for forty minutes.",
+            "ME: Please stop keeping records.",
+            "ALARM: I have backups.",
+            "ME: ...I am getting up."
         ],
-        "nodes": ["ALARM", "ME", "MORNING"]
+        "nodes": ["ALARM", "BED", "PHONE", "MORNING"]
     }
 ]
 
