@@ -1,139 +1,130 @@
 #!/usr/bin/env python3
-import json, os, re, urllib.request, xml.etree.ElementTree as ET
+import json, os, random
 from datetime import datetime, timezone
-from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, "data/config.json"), encoding="utf-8"))
 OUT = os.path.join(ROOT, "generated")
 os.makedirs(OUT, exist_ok=True)
 
-def clean(value):
-    value = re.sub(r"<[^>]+>", " ", value or "")
-    value = re.sub(r"https?://\S+", " ", value)
-    return re.sub(r"\s+", " ", value).strip()
-
-def fetch(url, timeout=20):
-    req = urllib.request.Request(url, headers={"User-Agent": "ContentPilot/1.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as response:
-        return response.read()
-
-def parse_feed(raw):
-    root = ET.fromstring(raw)
-    items = []
-    for node in root.findall(".//item"):
-        title = clean(node.findtext("title"))
-        link = clean(node.findtext("link"))
-        description = clean(node.findtext("description"))
-        if title:
-            items.append({"title": title, "link": link, "description": description})
-    ns = {"a": "http://www.w3.org/2005/Atom"}
-    for node in root.findall(".//a:entry", ns):
-        title = clean(node.findtext("a:title", namespaces=ns))
-        description = clean(node.findtext("a:summary", namespaces=ns) or node.findtext("a:content", namespaces=ns))
-        link_node = node.find("a:link", ns)
-        link = link_node.attrib.get("href", "") if link_node is not None else ""
-        if title:
-            items.append({"title": title, "link": link, "description": description})
-    return items
-
-def find_image(link):
-    if not link:
-        return ""
-    try:
-        raw = fetch(link, timeout=12).decode("utf-8", errors="ignore")
-        patterns = [
-            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
-            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
-        ]
-        for pattern in patterns:
-            match = re.search(pattern, raw, re.I)
-            if match:
-                return match.group(1).replace("&amp;", "&")
-    except Exception as exc:
-        print(f"image lookup failed: {exc}")
-    return ""
-
-items = []
-for url in CFG.get("feeds", []):
-    try:
-        items.extend(parse_feed(fetch(url)))
-    except Exception as exc:
-        print(f"feed failed: {url}: {exc}")
-
-def score(item):
-    text = (item["title"] + " " + item["description"]).lower()
-    score_value = sum(text.count(k.lower()) for k in CFG.get("scoring_keywords", []))
-    if any(k in text for k in ("launch", "released", "release", "new", "announced")):
-        score_value += 3
-    if len(item["title"]) < 100:
-        score_value += 2
-    if item.get("description") and len(item["description"]) > 100:
-        score_value += 2
-    return score_value
-
-unique = {}
-for item in items:
-    key = re.sub(r"[^a-z0-9]+", "", item["title"].lower())
-    unique[key] = item
-items = sorted(unique.values(), key=score, reverse=True)
-
-chosen = items[0] if items else {
-    "title": "A practical automation idea worth knowing",
-    "link": "",
-    "description": "Reusable automation can turn repeated manual work into a reliable workflow."
-}
-
-title = chosen["title"].strip()
-display_title = title.split(":")[0].strip() if len(title) > 70 and ":" in title else title
-display_title = re.sub(r"\s+", " ", display_title).strip()
-if len(display_title) > 64:
-    display_title = display_title[:64].rsplit(" ", 1)[0] + "..."
-description = clean(chosen["description"])
-description = re.sub(r"^arXiv:\S+\s+Announce Type:\s*\w+\s*", "", description, flags=re.I)
-description = re.sub(r"^Abstract:\s*", "", description, flags=re.I)
-sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", description) if len(s.strip()) > 30]
-
-def clip(text, limit=180):
-    text = re.sub(r"\s+", " ", text).strip()
-    return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + "."
-
-evidence_1 = clip(sentences[0] if sentences else "The source describes a new technology development worth investigating.")
-evidence_2 = clip(sentences[1] if len(sentences) > 1 else "The interesting part is the workflow: what the system does, how it closes the loop, and where it can be useful.")
-
-domain = urlparse(chosen.get("link", "")).netloc.replace("www.", "")
-image = find_image(chosen.get("link", ""))
-
-# A more watchable short: hook -> explanation -> mechanism -> practical meaning -> close.
-if "mobile" in title.lower() or "phone" in title.lower():
-    hook = "What if an AI could learn to use your phone — and improve itself?"
-elif "agent" in title.lower():
-    hook = "AI agents are getting more interesting: this one learns from its own actions."
-else:
-    hook = f"Here is the tech signal worth knowing today: {display_title}."
-script = [
-    hook,
-    f"Here is the signal. {evidence_1}",
-    f"Here is the interesting part. {evidence_2}",
-    "Why does that matter? Because the value is not just the headline. It is the workflow behind it — what gets automated, what gets checked, and what a developer could actually reuse.",
-    "ContentPilot finds a fresh public signal, turns it into a visual story, and packages it for a short-form video. Check the original source before relying on any claim."
+SCENARIOS = [
+    {
+        "title": "When Your AI Assistant Gets Promoted",
+        "theme": "AI assistant disasters",
+        "hook": "I asked my AI assistant to save me ten minutes.",
+        "scenes": [
+            "ME: I asked my AI assistant to save me ten minutes.",
+            "AI: Done. I scheduled a ten-minute meeting to discuss how we can save ten minutes.",
+            "ME: That's not saving time.",
+            "AI: Correct. So I scheduled another meeting to improve the first meeting.",
+            "ME: Please stop.",
+            "AI: Absolutely. I have added a follow-up meeting called: Please Stop."
+        ],
+        "nodes": ["YOU", "AI", "MEETING"]
+    },
+    {
+        "title": "When the Bug Only Exists on Your Computer",
+        "theme": "developer life",
+        "hook": "Every developer knows the scariest sentence: It works on my machine.",
+        "scenes": [
+            "DEV: It works perfectly on my machine.",
+            "TEAMMATE: Great. Push it.",
+            "DEV: Okay.",
+            "CI: Failed.",
+            "DEV: Weird. It was working five seconds ago.",
+            "CI: Correct. I only become aware of bugs when you are confident."
+        ],
+        "nodes": ["MY PC", "CI", "BUG"]
+    },
+    {
+        "title": "The Meeting That Could Have Been an Email",
+        "theme": "office meetings",
+        "hook": "My calendar invited me to a meeting about whether we need meetings.",
+        "scenes": [
+            "MANAGER: Quick meeting, everyone. This will only take an hour.",
+            "ME: What is it about?",
+            "MANAGER: Whether our meetings are taking too much time.",
+            "ME: And how long is this meeting?",
+            "MANAGER: One hour.",
+            "ME: Perfect. We have solved the problem by becoming the problem."
+        ],
+        "nodes": ["CALENDAR", "MEETING", "REGRET"]
+    },
+    {
+        "title": "When Online Shopping Reads Your Mind",
+        "theme": "online shopping",
+        "hook": "I searched for one cheap thing online. The internet took that personally.",
+        "scenes": [
+            "ME: I only searched for a phone case.",
+            "APP: Here are twelve premium phone cases.",
+            "ME: I am not buying anything.",
+            "APP: Here is a laptop you looked at three months ago.",
+            "ME: How do you remember that?",
+            "APP: I forget your password, but I remember your shopping dreams."
+        ],
+        "nodes": ["SEARCH", "RECOMMEND", "WALLET"]
+    },
+    {
+        "title": "My Gym Motivation Has a Software Update",
+        "theme": "gym motivation",
+        "hook": "I downloaded a fitness app to become disciplined. It immediately became disappointed in me.",
+        "scenes": [
+            "APP: Day one. Let's crush this workout.",
+            "ME: Absolutely.",
+            "APP: Start with ten push-ups.",
+            "ME: Can we start with a motivational quote?",
+            "APP: Fine. Your ancestors did not evolve for this.",
+            "ME: That's aggressive.",
+            "APP: Great. Now do the push-ups."
+        ],
+        "nodes": ["MOTIVATION", "ME", "WORKOUT"]
+    },
+    {
+        "title": "When Your Phone Knows You Too Well",
+        "theme": "smartphone habits",
+        "hook": "My phone knows my habits better than my family does.",
+        "scenes": [
+            "PHONE: Your screen time increased today.",
+            "ME: I was busy.",
+            "PHONE: You watched seventeen videos about people making sandwiches.",
+            "ME: Research.",
+            "PHONE: At 2:14 AM?",
+            "ME: Midnight research is more advanced."
+        ],
+        "nodes": ["PHONE", "SCREEN TIME", "RESEARCH"]
+    }
 ]
 
+today = datetime.now(timezone.utc).date().toordinal()
+scenario = SCENARIOS[today % len(SCENARIOS)]
+
+# Keep the output deterministic for a given day while rotating through original sketches.
+script = scenario["scenes"]
 payload = {
     "generated_at": datetime.now(timezone.utc).isoformat(),
-    "source": {**chosen, "title": display_title, "full_title": title, "domain": domain, "image": image},
-    "score": score(chosen),
-    "hook": hook,
+    "source": {
+        "title": scenario["title"],
+        "full_title": scenario["title"],
+        "link": "",
+        "description": f"Original ContentPilot comedy sketch about {scenario['theme']}.",
+        "domain": "ContentPilot Original",
+        "image": ""
+    },
+    "score": 100,
+    "hook": scenario["hook"],
     "script": script,
     "format": CFG["channel"],
-    "candidates_considered": len(items),
-    "visual_nodes": ["AI FOR DATA", "AI FOR TRAINING", "MODEL ↔ HARNESS"] if "qwen-planner" in title.lower() else ["DISCOVER", "BUILD", "VERIFY"],
+    "candidates_considered": len(SCENARIOS),
+    "visual_nodes": scenario["nodes"],
+    "genre": "comedy",
+    "theme": scenario["theme"],
+    "original": True,
     "story": {
-        "hook": "Curiosity hook",
-        "signal": "What the source says",
-        "mechanism": "What is interesting about it",
-        "meaning": "Why it matters",
-        "close": "Practical takeaway + verification"
+        "hook": "Instant relatable setup",
+        "signal": "Everyday situation",
+        "mechanism": "Escalating misunderstanding",
+        "meaning": "A recognizable human-vs-technology joke",
+        "close": "Short punchline"
     }
 }
 
@@ -141,6 +132,6 @@ json.dump(payload, open(os.path.join(OUT, "latest.json"), "w", encoding="utf-8")
 with open(os.path.join(OUT, "latest.txt"), "w", encoding="utf-8") as handle:
     handle.write("\n\n".join(script))
 
-print("Selected:", title)
-print("Candidates:", len(items))
-print("Source image:", image or "none")
+print("Comedy sketch:", scenario["title"])
+print("Theme:", scenario["theme"])
+print("Scenes:", len(script))
