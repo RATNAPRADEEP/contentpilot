@@ -118,7 +118,7 @@ for i,line in enumerate(S):
     if a in ("alarm_ringing","showing_record","showing_backup","keeping_record"): by.location.x=1.45
     props(a); end=max(2,int(d*FPS)); sc.frame_start=1; sc.frame_end=end
     ang=[(7,-12.2,5.5),(4.7,-13,5),(8.4,-9.4,5.4),(1.8,-13.6,5.2),(-5,-11.2,5.8),(6.2,-10.5,7),(2.8,-13.2,4.8),(-3.8,-12,6.2)][i%8]
-    bpy.ops.object.camera_add(location=ang); cam=bpy.context.object; cam.data.lens=52; look(cam,(.35,1.55,2.45)); cam.keyframe_insert(data_path="location",frame=1)
+    bpy.ops.object.camera_add(location=ang); cam=bpy.context.object; cam.data.lens=52; sc.camera=cam; look(cam,(.35,1.55,2.45)); cam.keyframe_insert(data_path="location",frame=1)
     cam.location.x+=.45; cam.location.y+=.28; look(cam,(.35,1.55,2.45)); cam.keyframe_insert(data_path="location",frame=end)
     animate(ar,aq,a,end); animate(by,bq,a,end)
     root=by if actor=="byte" else ar; root.location.x+=.1; key(root,"location",end//2)
