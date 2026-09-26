@@ -7,7 +7,7 @@ D=json.load(open(os.path.join(ROOT,"generated","latest.json"),encoding="utf-8"))
 OUT=os.path.join(ROOT,"generated","contentpilot-latest.mp4")
 B=os.path.join(ROOT,"build3d"); os.makedirs(B,exist_ok=True)
 S=D["script"]; P=D.get("scene_plan",[])
-FPS,W,H=24,540,960
+FPS,W,H=15,432,768
 
 def run(c): subprocess.run(c,check=True)
 def dur(p): return float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=noprint_wrappers=1:nokey=1",p],text=True))
