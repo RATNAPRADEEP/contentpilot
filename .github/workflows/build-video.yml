@@ -47,8 +47,32 @@ jobs:
       - name: Originality and content preflight
         run: python3 scripts/content_preflight.py
 
+      - name: Remove stale video before render
+        run: |
+          rm -f generated/contentpilot-latest.mp4
+          rm -rf build3d
+
       - name: Render 3D comedy video
         run: /opt/blender-4.5.14/blender --background --factory-startup --python scripts/render_blender.py
+
+      - name: Validate rendered video
+        run: |
+          test -s generated/contentpilot-latest.mp4
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 generated/contentpilot-latest.mp4
+          python3 - <<'PY'
+          import subprocess, os
+          from PIL import Image, ImageChops, ImageStat
+          src="generated/contentpilot-latest.mp4"
+          out="/tmp/cpframes"
+          os.makedirs(out,exist_ok=True)
+          subprocess.run(["ffmpeg","-y","-loglevel","error","-i",src,"-vf","fps=1/4,scale=270:-1","/tmp/cpframes/%03d.jpg"],check=True)
+          files=sorted(os.path.join(out,x) for x in os.listdir(out) if x.endswith(".jpg"))
+          if len(files)<4: raise SystemExit("Too few sampled video frames")
+          imgs=[Image.open(x).convert("RGB") for x in files]
+          diffs=[ImageStat.Stat(ImageChops.difference(imgs[i-1],imgs[i])).mean for i in range(1,len(imgs))]
+          print("sampled_frames=",len(files),"mean_frame_differences=",diffs)
+          if max(diffs)<1.5: raise SystemExit("Video appears visually static; refusing artifact")
+          PY
 
       - name: Update dashboard
         run: python3 scripts/update_dashboard.py
