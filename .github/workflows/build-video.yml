@@ -71,7 +71,7 @@ jobs:
           imgs=[Image.open(x).convert("RGB") for x in files]
           diffs=[ImageStat.Stat(ImageChops.difference(imgs[i-1],imgs[i])).mean for i in range(1,len(imgs))]
           print("sampled_frames=",len(files),"mean_frame_differences=",diffs)
-          if max(diffs)<1.5: raise SystemExit("Video appears visually static; refusing artifact")
+          if max(max(d) for d in diffs)<1.5: raise SystemExit("Video appears visually static; refusing artifact")
           PY
 
       - name: Update dashboard
