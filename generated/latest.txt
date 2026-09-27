@@ -1,15 +1,11 @@
-ALARM: Wake up. It is seven.
+ME: The delivery is five minutes away.
 
-ME: Five more minutes.
+FRIEND: Great. Sit down.
 
-ALARM: You said five minutes five minutes ago.
+ME: I cannot. The tracker is moving.
 
-ME: I am negotiating.
+FRIEND: It has been five minutes.
 
-ALARM: Yesterday you negotiated for forty minutes.
+ME: Now it says four minutes.
 
-ME: Please stop keeping records.
-
-ALARM: I have backups.
-
-ME: ...I am getting up.
+FRIEND: So the food is getting closer and time is getting farther away.

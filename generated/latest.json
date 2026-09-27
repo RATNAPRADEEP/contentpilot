@@ -1,65 +1,53 @@
 {
-  "generated_at": "2026-09-25T18:29:16.870978+00:00",
+  "generated_at": "2026-09-27T11:19:13.912970+00:00",
   "source": {
-    "title": "The Alarm Clock Negotiation",
-    "full_title": "The Alarm Clock Negotiation",
+    "title": "The Delivery Is Five Minutes Away",
+    "full_title": "The Delivery Is Five Minutes Away",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: morning routines.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: food delivery and waiting.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "My alarm clock has started keeping evidence against me.",
+  "hook": "The delivery tracker said five minutes, which apparently means a small emotional journey.",
   "script": [
-    "ALARM: Wake up. It is seven.",
-    "ME: Five more minutes.",
-    "ALARM: You said five minutes five minutes ago.",
-    "ME: I am negotiating.",
-    "ALARM: Yesterday you negotiated for forty minutes.",
-    "ME: Please stop keeping records.",
-    "ALARM: I have backups.",
-    "ME: ...I am getting up."
+    "ME: The delivery is five minutes away.",
+    "FRIEND: Great. Sit down.",
+    "ME: I cannot. The tracker is moving.",
+    "FRIEND: It has been five minutes.",
+    "ME: Now it says four minutes.",
+    "FRIEND: So the food is getting closer and time is getting farther away."
   ],
   "scene_plan": [
     {
-      "actor": "byte",
-      "action": "alarm_ringing",
-      "focus": "alarm"
+      "actor": "arjun",
+      "action": "checking_tracker",
+      "focus": "delivery_tracker"
     },
     {
       "actor": "arjun",
-      "action": "sleepy",
-      "focus": "bed"
-    },
-    {
-      "actor": "byte",
-      "action": "keeping_record",
-      "focus": "record_book"
+      "action": "sitting",
+      "focus": "phone"
     },
     {
       "actor": "arjun",
-      "action": "negotiating",
-      "focus": "bed"
-    },
-    {
-      "actor": "byte",
-      "action": "showing_record",
-      "focus": "record_book"
+      "action": "watching_tracker",
+      "focus": "delivery_tracker"
     },
     {
       "actor": "arjun",
-      "action": "pleading",
-      "focus": "bed"
-    },
-    {
-      "actor": "byte",
-      "action": "showing_backup",
-      "focus": "backup_files"
+      "action": "waiting",
+      "focus": "delivery_tracker"
     },
     {
       "actor": "arjun",
-      "action": "getting_up",
-      "focus": "bed"
+      "action": "checking_tracker",
+      "focus": "delivery_tracker"
+    },
+    {
+      "actor": "arjun",
+      "action": "staring_at_tracker",
+      "focus": "delivery_tracker"
     }
   ],
   "format": {
@@ -72,10 +60,9 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "ALARM",
-    "BED",
-    "PHONE",
-    "MORNING"
+    "TRACKER",
+    "ME",
+    "FOOD"
   ],
   "characters": {
     "primary": [
@@ -107,7 +94,7 @@
   },
   "background_urls": [],
   "genre": "comedy",
-  "theme": "morning routines",
+  "theme": "food delivery and waiting",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",
