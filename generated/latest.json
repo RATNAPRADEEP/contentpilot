@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-09-27T11:19:13.912970+00:00",
+  "generated_at": "2026-09-28T12:48:01.083229+00:00",
   "source": {
-    "title": "The Delivery Is Five Minutes Away",
-    "full_title": "The Delivery Is Five Minutes Away",
+    "title": "The Apartment Lift Stops at Every Floor",
+    "full_title": "The Apartment Lift Stops at Every Floor",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: food delivery and waiting.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: apartment life.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "The delivery tracker said five minutes, which apparently means a small emotional journey.",
+  "hook": "You enter the lift for one floor and suddenly become a tourist of the entire building.",
   "script": [
-    "ME: The delivery is five minutes away.",
-    "FRIEND: Great. Sit down.",
-    "ME: I cannot. The tracker is moving.",
-    "FRIEND: It has been five minutes.",
-    "ME: Now it says four minutes.",
-    "FRIEND: So the food is getting closer and time is getting farther away."
+    "ME: I am going to the third floor.",
+    "LIFT: Door closing.",
+    "LIFT: Door opening.",
+    "ME: We stopped at the second floor.",
+    "NEIGHBOR: I need the fourth.",
+    "ME: At this rate, I will visit every floor before lunch."
   ],
   "scene_plan": [
     {
       "actor": "arjun",
-      "action": "checking_tracker",
-      "focus": "delivery_tracker"
+      "action": "pressing_button",
+      "focus": "lift_panel"
+    },
+    {
+      "actor": "byte",
+      "action": "door_closing",
+      "focus": "lift"
+    },
+    {
+      "actor": "byte",
+      "action": "door_opening",
+      "focus": "lift"
     },
     {
       "actor": "arjun",
-      "action": "sitting",
-      "focus": "phone"
-    },
-    {
-      "actor": "arjun",
-      "action": "watching_tracker",
-      "focus": "delivery_tracker"
+      "action": "surprised",
+      "focus": "floor_display"
     },
     {
       "actor": "arjun",
       "action": "waiting",
-      "focus": "delivery_tracker"
+      "focus": "lift"
     },
     {
       "actor": "arjun",
-      "action": "checking_tracker",
-      "focus": "delivery_tracker"
-    },
-    {
-      "actor": "arjun",
-      "action": "staring_at_tracker",
-      "focus": "delivery_tracker"
+      "action": "exasperated",
+      "focus": "floor_display"
     }
   ],
   "format": {
@@ -60,9 +60,9 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "TRACKER",
+    "LIFT",
     "ME",
-    "FOOD"
+    "NEIGHBOR"
   ],
   "characters": {
     "primary": [
@@ -94,7 +94,7 @@
   },
   "background_urls": [],
   "genre": "comedy",
-  "theme": "food delivery and waiting",
+  "theme": "apartment life",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",

@@ -1,11 +1,11 @@
-ME: The delivery is five minutes away.
+ME: I am going to the third floor.
 
-FRIEND: Great. Sit down.
+LIFT: Door closing.
 
-ME: I cannot. The tracker is moving.
+LIFT: Door opening.
 
-FRIEND: It has been five minutes.
+ME: We stopped at the second floor.
 
-ME: Now it says four minutes.
+NEIGHBOR: I need the fourth.
 
-FRIEND: So the food is getting closer and time is getting farther away.
+ME: At this rate, I will visit every floor before lunch.
