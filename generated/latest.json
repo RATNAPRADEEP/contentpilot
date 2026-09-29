@@ -1,53 +1,47 @@
 {
-  "generated_at": "2026-09-28T12:48:01.083229+00:00",
+  "generated_at": "2026-09-29T12:03:26.596399+00:00",
   "source": {
-    "title": "The Apartment Lift Stops at Every Floor",
-    "full_title": "The Apartment Lift Stops at Every Floor",
+    "title": "When the Power Goes Out During Your Presentation",
+    "full_title": "When the Power Goes Out During Your Presentation",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: apartment life.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: student and office life.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "You enter the lift for one floor and suddenly become a tourist of the entire building.",
+  "hook": "Nothing improves public speaking like losing the screen halfway through your presentation.",
   "script": [
-    "ME: I am going to the third floor.",
-    "LIFT: Door closing.",
-    "LIFT: Door opening.",
-    "ME: We stopped at the second floor.",
-    "NEIGHBOR: I need the fourth.",
-    "ME: At this rate, I will visit every floor before lunch."
+    "ME: Good morning. Today I will explain the whole project.",
+    "POWER: Off.",
+    "ME: Okay. New presentation. I will explain the project from memory.",
+    "FRIEND: You were reading the slides.",
+    "ME: I know. This is now an advanced version."
   ],
   "scene_plan": [
     {
       "actor": "arjun",
-      "action": "pressing_button",
-      "focus": "lift_panel"
+      "action": "presenting",
+      "focus": "projector"
     },
     {
       "actor": "byte",
-      "action": "door_closing",
-      "focus": "lift"
-    },
-    {
-      "actor": "byte",
-      "action": "door_opening",
-      "focus": "lift"
+      "action": "power_off",
+      "focus": "dark_projector"
     },
     {
       "actor": "arjun",
-      "action": "surprised",
-      "focus": "floor_display"
+      "action": "panicking",
+      "focus": "dark_projector"
     },
     {
       "actor": "arjun",
-      "action": "waiting",
-      "focus": "lift"
+      "action": "presenting_from_memory",
+      "focus": "notes"
     },
     {
       "actor": "arjun",
-      "action": "exasperated",
-      "focus": "floor_display"
+      "action": "embarrassed",
+      "focus": "notes"
     }
   ],
   "format": {
@@ -60,9 +54,9 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "LIFT",
-    "ME",
-    "NEIGHBOR"
+    "PRESENTATION",
+    "POWER",
+    "PANIC"
   ],
   "characters": {
     "primary": [
@@ -94,7 +88,7 @@
   },
   "background_urls": [],
   "genre": "comedy",
-  "theme": "apartment life",
+  "theme": "student and office life",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",

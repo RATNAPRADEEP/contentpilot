@@ -1,11 +1,9 @@
-ME: I am going to the third floor.
+ME: Good morning. Today I will explain the whole project.
 
-LIFT: Door closing.
+POWER: Off.
 
-LIFT: Door opening.
+ME: Okay. New presentation. I will explain the project from memory.
 
-ME: We stopped at the second floor.
+FRIEND: You were reading the slides.
 
-NEIGHBOR: I need the fourth.
-
-ME: At this rate, I will visit every floor before lunch.
+ME: I know. This is now an advanced version.
