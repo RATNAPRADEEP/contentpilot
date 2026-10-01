@@ -1,47 +1,53 @@
 {
-  "generated_at": "2026-09-29T12:03:26.596399+00:00",
+  "generated_at": "2026-10-01T12:21:43.513304+00:00",
   "source": {
-    "title": "When the Power Goes Out During Your Presentation",
-    "full_title": "When the Power Goes Out During Your Presentation",
+    "title": "When the Bus Arrives After You Stop Checking",
+    "full_title": "When the Bus Arrives After You Stop Checking",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: student and office life.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: commuting.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "Nothing improves public speaking like losing the screen halfway through your presentation.",
+  "hook": "Public transport has a sixth sense for the exact moment you stop watching for it.",
   "script": [
-    "ME: Good morning. Today I will explain the whole project.",
-    "POWER: Off.",
-    "ME: Okay. New presentation. I will explain the project from memory.",
-    "FRIEND: You were reading the slides.",
-    "ME: I know. This is now an advanced version."
+    "ME: No bus yet.",
+    "ME: I will check my phone for one second.",
+    "BUS: Arrives.",
+    "ME: Wait!",
+    "BUS: Leaves.",
+    "ME: Incredible. I looked away for one second and missed the entire plot."
   ],
   "scene_plan": [
     {
       "actor": "arjun",
-      "action": "presenting",
-      "focus": "projector"
+      "action": "waiting",
+      "focus": "bus_stop"
+    },
+    {
+      "actor": "arjun",
+      "action": "checking_phone",
+      "focus": "phone"
     },
     {
       "actor": "byte",
-      "action": "power_off",
-      "focus": "dark_projector"
+      "action": "bus_arrives",
+      "focus": "bus"
     },
     {
       "actor": "arjun",
-      "action": "panicking",
-      "focus": "dark_projector"
+      "action": "running",
+      "focus": "bus"
+    },
+    {
+      "actor": "byte",
+      "action": "bus_leaves",
+      "focus": "bus"
     },
     {
       "actor": "arjun",
-      "action": "presenting_from_memory",
-      "focus": "notes"
-    },
-    {
-      "actor": "arjun",
-      "action": "embarrassed",
-      "focus": "notes"
+      "action": "stunned",
+      "focus": "bus_stop"
     }
   ],
   "format": {
@@ -54,9 +60,9 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "PRESENTATION",
-    "POWER",
-    "PANIC"
+    "BUS STOP",
+    "PHONE",
+    "BUS"
   ],
   "characters": {
     "primary": [
@@ -88,7 +94,7 @@
   },
   "background_urls": [],
   "genre": "comedy",
-  "theme": "student and office life",
+  "theme": "commuting",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",

@@ -1,9 +1,11 @@
-ME: Good morning. Today I will explain the whole project.
+ME: No bus yet.
 
-POWER: Off.
+ME: I will check my phone for one second.
 
-ME: Okay. New presentation. I will explain the project from memory.
+BUS: Arrives.
 
-FRIEND: You were reading the slides.
+ME: Wait!
 
-ME: I know. This is now an advanced version.
+BUS: Leaves.
+
+ME: Incredible. I looked away for one second and missed the entire plot.
