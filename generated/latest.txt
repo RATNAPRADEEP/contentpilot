@@ -1,11 +1,13 @@
-ME: No bus yet.
+ME: I am not buying this today.
 
-ME: I will check my phone for one second.
+PHONE: Your cart misses you.
 
-BUS: Arrives.
+ME: It has been twenty minutes.
 
-ME: Wait!
+PHONE: We saved your item.
 
-BUS: Leaves.
+ME: I know.
 
-ME: Incredible. I looked away for one second and missed the entire plot.
+PHONE: It will also remind you again tomorrow.
+
+ME: Great. Even my cart has follow-up skills.
