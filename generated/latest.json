@@ -1,59 +1,53 @@
 {
-  "generated_at": "2026-10-02T11:49:08.061064+00:00",
+  "generated_at": "2026-10-04T11:43:58.820741+00:00",
   "source": {
-    "title": "The Shopping Cart You Abandoned",
-    "full_title": "The Shopping Cart You Abandoned",
+    "title": "When the QR Payment Says 'Pending'",
+    "full_title": "When the QR Payment Says 'Pending'",
     "link": "",
-    "description": "Original fictional comedy sketch inspired by the everyday situation: online shopping habits.",
+    "description": "Original fictional comedy sketch inspired by the everyday situation: everyday digital payments.",
     "domain": "ContentPilot Original",
     "image": ""
   },
   "score": 100,
-  "hook": "You leave one item in a shopping cart and the internet suddenly becomes very concerned.",
+  "hook": "The payment said pending, so now everyone in the shop is emotionally invested.",
   "script": [
-    "ME: I am not buying this today.",
-    "PHONE: Your cart misses you.",
-    "ME: It has been twenty minutes.",
-    "PHONE: We saved your item.",
-    "ME: I know.",
-    "PHONE: It will also remind you again tomorrow.",
-    "ME: Great. Even my cart has follow-up skills."
+    "CUSTOMER: I paid. The screen says pending.",
+    "CASHIER: Okay. We wait.",
+    "CUSTOMER: How long?",
+    "CASHIER: Usually a few seconds.",
+    "CUSTOMER: It has been two minutes.",
+    "CASHIER: Congratulations. We are now both refreshing the same screen."
   ],
   "scene_plan": [
     {
       "actor": "arjun",
-      "action": "rejecting_purchase",
-      "focus": "cart"
-    },
-    {
-      "actor": "byte",
-      "action": "notification",
-      "focus": "cart"
+      "action": "paying",
+      "focus": "phone_pending"
     },
     {
       "actor": "arjun",
-      "action": "checking_time",
-      "focus": "cart"
-    },
-    {
-      "actor": "byte",
-      "action": "saved_item",
-      "focus": "cart"
+      "action": "waiting",
+      "focus": "counter"
     },
     {
       "actor": "arjun",
-      "action": "resigned",
-      "focus": "cart"
-    },
-    {
-      "actor": "byte",
-      "action": "reminder",
-      "focus": "cart"
+      "action": "checking_phone",
+      "focus": "phone_pending"
     },
     {
       "actor": "arjun",
-      "action": "exasperated",
-      "focus": "cart"
+      "action": "waiting",
+      "focus": "counter"
+    },
+    {
+      "actor": "arjun",
+      "action": "impatient",
+      "focus": "phone_pending"
+    },
+    {
+      "actor": "arjun",
+      "action": "refreshing",
+      "focus": "phone_pending"
     }
   ],
   "format": {
@@ -66,9 +60,9 @@
   },
   "candidates_considered": 8,
   "visual_nodes": [
-    "CART",
-    "PHONE",
-    "ME"
+    "CUSTOMER",
+    "CASHIER",
+    "PENDING"
   ],
   "characters": {
     "primary": [
@@ -100,7 +94,7 @@
   },
   "background_urls": [],
   "genre": "comedy",
-  "theme": "online shopping habits",
+  "theme": "everyday digital payments",
   "original": true,
   "story": {
     "hook": "Real-life relatable setup",

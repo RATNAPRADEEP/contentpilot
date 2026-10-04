@@ -1,13 +1,11 @@
-ME: I am not buying this today.
+CUSTOMER: I paid. The screen says pending.
 
-PHONE: Your cart misses you.
+CASHIER: Okay. We wait.
 
-ME: It has been twenty minutes.
+CUSTOMER: How long?
 
-PHONE: We saved your item.
+CASHIER: Usually a few seconds.
 
-ME: I know.
+CUSTOMER: It has been two minutes.
 
-PHONE: It will also remind you again tomorrow.
-
-ME: Great. Even my cart has follow-up skills.
+CASHIER: Congratulations. We are now both refreshing the same screen.
