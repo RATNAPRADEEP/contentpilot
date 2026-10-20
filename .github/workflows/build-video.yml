@@ -1,14 +1,7 @@
 name: ContentPilot Build
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "generated/**"
-      - "docs/**"
   workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * *"
 
 permissions:
   contents: write
